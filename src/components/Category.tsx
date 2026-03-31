@@ -26,6 +26,7 @@ function Category() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
+  const [selectedItems, setSelectedItems] = useState<number[]>([])
 
   const [newCategory, setNewCategory] = useState({
     name: '',
@@ -51,6 +52,28 @@ function Category() {
     const matchesStatus = statusFilter === 'all' || cat.status === statusFilter
     return matchesSearch && matchesStatus
   })
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedAll(checked)
+    if (checked) {
+      setSelectedItems(filteredCategories.map(c => c.id))
+    } else {
+      setSelectedItems([])
+    }
+  }
+
+  const handleSelectItem = (id: number) => {
+    if (selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter(i => i !== id))
+      setSelectedAll(false)
+    } else {
+      const newSelected = [...selectedItems, id]
+      setSelectedItems(newSelected)
+      if (newSelected.length === filteredCategories.length) {
+        setSelectedAll(true)
+      }
+    }
+  }
 
   const handleAddCategory = () => {
     if (!newCategory.name || !newCategory.description) {
@@ -239,7 +262,80 @@ function Category() {
             justifyContent: 'space-between',
             alignItems: 'center'
           }}>
-            <div style={{ fontSize: '14px', color: 'white', fontWeight: 500 }}>Tất cả danh mục</div>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <div style={{ fontSize: '14px', color: 'white', fontWeight: 500 }}>Tất cả danh mục</div>
+              {selectedItems.length > 0 && (
+                <>
+                  <div style={{ fontSize: '13px', color: '#8b92a7' }}>({selectedItems.length} đã chọn)</div>
+                  <button 
+                    onClick={() => {
+                      if (confirm(`Bạn có chắc muốn xóa ${selectedItems.length} danh mục đã chọn?`)) {
+                        setCategories(categories.filter(c => !selectedItems.includes(c.id)))
+                        setSelectedItems([])
+                        setSelectedAll(false)
+                        alert('Đã xóa các danh mục!')
+                      }
+                    }}
+                    style={{ 
+                      padding: '6px 14px', 
+                      background: '#ef4444', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '6px', 
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: 500
+                    }}
+                  >
+                    Xóa đã chọn
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setCategories(categories.map(c => 
+                        selectedItems.includes(c.id) ? { ...c, status: 'active' as const } : c
+                      ))
+                      setSelectedItems([])
+                      setSelectedAll(false)
+                      alert('Đã kích hoạt các danh mục!')
+                    }}
+                    style={{ 
+                      padding: '6px 14px', 
+                      background: '#10b981', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '6px', 
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: 500
+                    }}
+                  >
+                    Kích hoạt
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setCategories(categories.map(c => 
+                        selectedItems.includes(c.id) ? { ...c, status: 'inactive' as const } : c
+                      ))
+                      setSelectedItems([])
+                      setSelectedAll(false)
+                      alert('Đã tắt các danh mục!')
+                    }}
+                    style={{ 
+                      padding: '6px 14px', 
+                      background: '#6b7280', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '6px', 
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: 500
+                    }}
+                  >
+                    Tắt
+                  </button>
+                </>
+              )}
+            </div>
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
               <button 
                 onClick={() => setShowAddModal(true)}
@@ -289,7 +385,7 @@ function Category() {
                   <input 
                     type="checkbox" 
                     checked={selectedAll}
-                    onChange={(e) => setSelectedAll(e.target.checked)}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
                     style={{ cursor: 'pointer', width: '20px', height: '20px' }}
                   />
                 </th>
@@ -306,7 +402,7 @@ function Category() {
               {filteredCategories.map((category, index) => (
                 <tr key={category.id} style={{ borderBottom: '1px solid #2a2f3e', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = '#0f1419'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                   <td style={{ padding: '24px 28px' }}>
-                    <input type="checkbox" checked={selectedAll} readOnly style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
+                    <input type="checkbox" checked={selectedItems.includes(category.id)} onChange={() => handleSelectItem(category.id)} style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
                   </td>
                   <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>{index + 1}</td>
                   <td style={{ padding: '24px 28px', color: 'white', fontSize: '16px', fontWeight: 500 }}>{category.name}</td>
