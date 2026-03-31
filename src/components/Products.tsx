@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useStore } from '../store/useStore'
+import Header from './Header'
 
 function Products() {
   const products = useStore((state) => state.products)
@@ -139,69 +140,12 @@ function Products() {
 
   return (
     <div style={{ color: 'white', minHeight: '100vh' }}>
-      <div style={{ 
-        padding: '24px 40px', 
-        borderBottom: '1px solid #2a2f3e',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        background: '#0f1419'
-      }}>
-        <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 600, letterSpacing: '1.2px' }}>DANH SÁCH SẢN PHẨM</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button style={{ 
-            width: '42px',
-            height: '42px',
-            background: '#1a1f2e',
-            border: '1px solid #2a2f3e',
-            borderRadius: '8px',
-            color: '#8b92a7',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px'
-          }}>⚙️</button>
-          <button style={{ 
-            width: '42px',
-            height: '42px',
-            background: '#1a1f2e',
-            border: '1px solid #2a2f3e',
-            borderRadius: '8px',
-            color: '#8b92a7',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px'
-          }}>🔔</button>
-          <div style={{ position: 'relative' }}>
-            <input 
-              type="text"
-              placeholder="Tìm kiếm..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                padding: '10px 18px 10px 42px',
-                background: '#1a1f2e',
-                border: '1px solid #2a2f3e',
-                borderRadius: '8px',
-                color: 'white',
-                fontSize: '15px',
-                width: '240px'
-              }}
-            />
-            <span style={{ 
-              position: 'absolute',
-              left: '14px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#8b92a7',
-              fontSize: '16px'
-            }}>🔍</span>
-          </div>
-        </div>
-      </div>
+      <Header 
+        title="DANH SÁCH SẢN PHẨM"
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Tìm kiếm sản phẩm..."
+      />
 
       <div style={{ padding: '40px' }}>
 
