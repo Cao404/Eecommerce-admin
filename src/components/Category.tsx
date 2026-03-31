@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useStore } from '../store/useStore'
 
 interface Category {
   id: number
@@ -10,14 +11,11 @@ interface Category {
 }
 
 function Category() {
-  const [categories, setCategories] = useState<Category[]>([
-    { id: 1, name: 'Điện thoại', description: 'Điện thoại thông minh', productCount: 45, parentCategory: 'Điện tử', status: 'active' },
-    { id: 2, name: 'Laptop', description: 'Máy tính xách tay', productCount: 32, parentCategory: 'Điện tử', status: 'active' },
-    { id: 3, name: 'Máy tính bảng', description: 'Tablet các loại', productCount: 18, parentCategory: 'Điện tử', status: 'active' },
-    { id: 4, name: 'Phụ kiện', description: 'Phụ kiện điện tử', productCount: 67, parentCategory: 'Điện tử', status: 'active' },
-    { id: 5, name: 'Tai nghe', description: 'Tai nghe và loa', productCount: 28, parentCategory: 'Phụ kiện', status: 'active' },
-    { id: 6, name: 'Sạc dự phòng', description: 'Pin sạc dự phòng', productCount: 15, parentCategory: 'Phụ kiện', status: 'active' },
-  ])
+  const categories = useStore((state) => state.categories)
+  const setCategories = useStore((state) => state.setCategories)
+  const addCategory = useStore((state) => state.addCategory)
+  const updateCategory = useStore((state) => state.updateCategory)
+  const deleteCategory = useStore((state) => state.deleteCategory)
 
   const [selectedAll, setSelectedAll] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
@@ -94,14 +92,14 @@ function Category() {
     const parentCat = newCategory.isNewParent ? newCategory.newParentName : newCategory.parentCategory
 
     const newId = Math.max(...categories.map(c => c.id)) + 1
-    setCategories([...categories, {
+    addCategory({
       id: newId,
       name: newCategory.name,
       description: newCategory.description,
       parentCategory: parentCat,
       productCount: 0,
       status: 'active'
-    }])
+    })
 
     setNewCategory({ name: '', description: '', parentCategory: '', isNewParent: false, newParentName: '' })
     setShowAddModal(false)
@@ -139,11 +137,11 @@ function Category() {
     const parentCat = editCategory.isNewParent ? editCategory.newParentName : editCategory.parentCategory
 
     if (selectedCategoryId) {
-      setCategories(categories.map(c => 
-        c.id === selectedCategoryId 
-          ? { ...c, name: editCategory.name, description: editCategory.description, parentCategory: parentCat }
-          : c
-      ))
+      updateCategory(selectedCategoryId, {
+        name: editCategory.name,
+        description: editCategory.description,
+        parentCategory: parentCat
+      })
 
       setShowEditModal(false)
       setSelectedCategoryId(null)
@@ -153,17 +151,18 @@ function Category() {
 
   const handleDelete = (id: number) => {
     if (confirm('Bạn có chắc muốn xóa danh mục này?')) {
-      setCategories(categories.filter(c => c.id !== id))
+      deleteCategory(id)
       alert('Đã xóa danh mục!')
     }
   }
 
   const handleToggleStatus = (id: number) => {
-    setCategories(categories.map(c => 
-      c.id === id 
-        ? { ...c, status: c.status === 'active' ? 'inactive' as const : 'active' as const }
-        : c
-    ))
+    const category = categories.find(c => c.id === id)
+    if (category) {
+      updateCategory(id, {
+        status: category.status === 'active' ? 'inactive' : 'active'
+      })
+    }
   }
 
   const handleViewDetail = (category: Category) => {
@@ -187,7 +186,7 @@ function Category() {
         alignItems: 'center',
         background: '#0f1419'
       }}>
-        <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 600, letterSpacing: '1.2px' }}>QUẢN LY DANH MỤC</h1>
+        <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 600, letterSpacing: '1.2px' }}>QUẢN LÝ DANH MỤC</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button style={{ 
             width: '42px',
@@ -296,7 +295,6 @@ function Category() {
                       ))
                       setSelectedItems([])
                       setSelectedAll(false)
-                      alert('Đã kích hoạt các danh mục!')
                     }}
                     style={{ 
                       padding: '6px 14px', 
