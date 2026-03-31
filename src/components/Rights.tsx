@@ -22,6 +22,7 @@ interface ActivityLog {
 
 function Rights() {
   const [selectedAll, setSelectedAll] = useState(false)
+  const [selectedItems, setSelectedItems] = useState<number[]>([])
   const [activeTab, setActiveTab] = useState('users')
 
   const adminUsers: AdminUser[] = [
@@ -56,6 +57,28 @@ function Rights() {
       user: '#3b82f6'
     }
     return colors[role] || '#6b7280'
+  }
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedAll(checked)
+    if (checked) {
+      setSelectedItems(adminUsers.map(u => u.id))
+    } else {
+      setSelectedItems([])
+    }
+  }
+
+  const handleSelectItem = (id: number) => {
+    if (selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter(i => i !== id))
+      setSelectedAll(false)
+    } else {
+      const newSelected = [...selectedItems, id]
+      setSelectedItems(newSelected)
+      if (newSelected.length === adminUsers.length) {
+        setSelectedAll(true)
+      }
+    }
   }
 
   return (
@@ -178,7 +201,7 @@ function Rights() {
                       <input 
                         type="checkbox" 
                         checked={selectedAll}
-                        onChange={(e) => setSelectedAll(e.target.checked)}
+                        onChange={(e) => handleSelectAll(e.target.checked)}
                         style={{ cursor: 'pointer', width: '20px', height: '20px' }}
                       />
                     </th>
@@ -194,7 +217,7 @@ function Rights() {
                   {adminUsers.map((user) => (
                     <tr key={user.id} style={{ borderBottom: '1px solid #2a2f3e', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = '#0f1419'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                       <td style={{ padding: '24px 28px' }}>
-                        <input type="checkbox" checked={selectedAll} readOnly style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
+                        <input type="checkbox" checked={selectedItems.includes(user.id)} onChange={() => handleSelectItem(user.id)} style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
                       </td>
                       <td style={{ padding: '24px 28px' }}>
                         <div style={{ color: 'white', fontSize: '16px', fontWeight: 500, marginBottom: '4px' }}>{user.name}</div>
