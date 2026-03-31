@@ -5,24 +5,22 @@ interface User {
   name: string
   email: string
   phone: string
-  role: 'admin' | 'user' | 'seller'
+  role: 'admin' | 'user'
   status: 'active' | 'inactive' | 'banned'
   registeredDate: string
   lastLogin: string
 }
 
 function UserManagement() {
-  const [activeTab, setActiveTab] = useState<'all' | 'admin' | 'user' | 'seller' | 'active' | 'banned'>('all')
+  const [activeTab, setActiveTab] = useState<'all' | 'admin' | 'user' | 'active' | 'banned'>('all')
   const [selectedAll, setSelectedAll] = useState(false)
   const [selectedItems, setSelectedItems] = useState<number[]>([])
 
   const users: User[] = [
     { id: 1, name: 'Admin Nguyễn', email: 'admin@shop.vn', phone: '0901111111', role: 'admin', status: 'active', registeredDate: '2023-01-01', lastLogin: '2024-03-31' },
     { id: 2, name: 'Trần Văn User', email: 'user1@gmail.com', phone: '0902222222', role: 'user', status: 'active', registeredDate: '2024-01-15', lastLogin: '2024-03-30' },
-    { id: 3, name: 'Lê Thị Seller', email: 'seller1@shop.vn', phone: '0903333333', role: 'seller', status: 'active', registeredDate: '2024-02-01', lastLogin: '2024-03-31' },
     { id: 4, name: 'Phạm Văn Banned', email: 'banned@gmail.com', phone: '0904444444', role: 'user', status: 'banned', registeredDate: '2024-01-20', lastLogin: '2024-03-15' },
     { id: 5, name: 'Hoàng Thị User2', email: 'user2@gmail.com', phone: '0905555555', role: 'user', status: 'active', registeredDate: '2024-02-10', lastLogin: '2024-03-29' },
-    { id: 6, name: 'Vũ Văn Seller2', email: 'seller2@shop.vn', phone: '0906666666', role: 'seller', status: 'active', registeredDate: '2024-02-15', lastLogin: '2024-03-31' },
     { id: 7, name: 'Đỗ Thị Inactive', email: 'inactive@gmail.com', phone: '0907777777', role: 'user', status: 'inactive', registeredDate: '2024-01-05', lastLogin: '2024-02-01' },
     { id: 8, name: 'Bùi Văn User3', email: 'user3@gmail.com', phone: '0908888888', role: 'user', status: 'active', registeredDate: '2024-03-01', lastLogin: '2024-03-30' },
   ]
@@ -30,8 +28,7 @@ function UserManagement() {
   const tabs = [
     { id: 'all', label: 'Tất cả', count: users.length },
     { id: 'admin', label: 'Admin', count: users.filter(u => u.role === 'admin').length },
-    { id: 'user', label: 'Người Bán', count: users.filter(u => u.role === 'seller').length },
-    { id: 'seller', label: 'Khách Hàng', count: users.filter(u => u.role === 'user').length },
+    { id: 'user', label: 'Người Dùng', count: users.filter(u => u.role === 'user').length },
     { id: 'active', label: 'Đang hoạt động', count: users.filter(u => u.status === 'active').length },
     { id: 'banned', label: 'Đã khóa', count: users.filter(u => u.status === 'banned').length },
   ]
@@ -42,17 +39,12 @@ function UserManagement() {
     ? users.filter(u => u.status === 'active')
     : activeTab === 'banned'
     ? users.filter(u => u.status === 'banned')
-    : activeTab === 'user'
-    ? users.filter(u => u.role === 'seller')
-    : activeTab === 'seller'
-    ? users.filter(u => u.role === 'user')
     : users.filter(u => u.role === activeTab)
 
   const getRoleText = (role: string) => {
     const texts: Record<string, string> = {
       admin: 'Quản trị viên',
-      user: 'Người dùng',
-      seller: 'Người bán'
+      user: 'Người dùng'
     }
     return texts[role] || role
   }
@@ -60,8 +52,7 @@ function UserManagement() {
   const getRoleColor = (role: string) => {
     const colors: Record<string, string> = {
       admin: '#8b5cf6',
-      user: '#3b82f6',
-      seller: '#f59e0b'
+      user: '#3b82f6'
     }
     return colors[role] || '#6b7280'
   }
