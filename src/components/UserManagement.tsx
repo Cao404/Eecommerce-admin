@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Header from './Header'
 
 interface User {
   id: number
@@ -15,6 +16,7 @@ function UserManagement() {
   const [activeTab, setActiveTab] = useState<'all' | 'admin' | 'user' | 'active' | 'banned'>('all')
   const [selectedAll, setSelectedAll] = useState(false)
   const [selectedItems, setSelectedItems] = useState<number[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
 
   const users: User[] = [
     { id: 1, name: 'Admin Nguyễn', email: 'admin@shop.vn', phone: '0901111111', role: 'admin', status: 'active', registeredDate: '2023-01-01', lastLogin: '2024-03-31' },
@@ -99,67 +101,12 @@ function UserManagement() {
 
   return (
     <div style={{ color: 'white', minHeight: '100vh' }}>
-      <div style={{ 
-        padding: '24px 40px', 
-        borderBottom: '1px solid #2a2f3e',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        background: '#0f1419'
-      }}>
-        <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 600, letterSpacing: '1.2px' }}>QUẢN LÝ NGƯỜI DÙNG</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button style={{ 
-            width: '42px',
-            height: '42px',
-            background: '#1a1f2e',
-            border: '1px solid #2a2f3e',
-            borderRadius: '8px',
-            color: '#8b92a7',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px'
-          }}>⚙️</button>
-          <button style={{ 
-            width: '42px',
-            height: '42px',
-            background: '#1a1f2e',
-            border: '1px solid #2a2f3e',
-            borderRadius: '8px',
-            color: '#8b92a7',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px'
-          }}>🔔</button>
-          <div style={{ position: 'relative' }}>
-            <input 
-              type="text"
-              placeholder="Tìm kiếm người dùng..."
-              style={{
-                padding: '10px 18px 10px 42px',
-                background: '#1a1f2e',
-                border: '1px solid #2a2f3e',
-                borderRadius: '8px',
-                color: 'white',
-                fontSize: '15px',
-                width: '240px'
-              }}
-            />
-            <span style={{ 
-              position: 'absolute',
-              left: '14px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#8b92a7',
-              fontSize: '16px'
-            }}>🔍</span>
-          </div>
-        </div>
-      </div>
+      <Header 
+        title="QUẢN LÝ NGƯỜI DÙNG"
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Tìm kiếm người dùng..."
+      />
 
       <div style={{ padding: '40px' }}>
         <div style={{ display: 'flex', gap: '12px', marginBottom: '30px', overflowX: 'auto' }}>
