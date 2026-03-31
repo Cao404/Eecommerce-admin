@@ -14,6 +14,7 @@ interface Order {
 
 function Orders() {
   const [selectedAll, setSelectedAll] = useState(false)
+  const [selectedItems, setSelectedItems] = useState<number[]>([])
   const [activeTab, setActiveTab] = useState('all')
 
   const orders: Order[] = [
@@ -54,6 +55,28 @@ function Orders() {
       cancelled: 'Đã hủy'
     }
     return texts[status] || status
+  }
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedAll(checked)
+    if (checked) {
+      setSelectedItems(orders.map(o => o.id))
+    } else {
+      setSelectedItems([])
+    }
+  }
+
+  const handleSelectItem = (id: number) => {
+    if (selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter(i => i !== id))
+      setSelectedAll(false)
+    } else {
+      const newSelected = [...selectedItems, id]
+      setSelectedItems(newSelected)
+      if (newSelected.length === orders.length) {
+        setSelectedAll(true)
+      }
+    }
   }
 
   return (
@@ -125,28 +148,75 @@ function Orders() {
           <div style={{ 
             display: 'flex', 
             borderBottom: '1px solid #2a2f3e',
-            overflowX: 'auto'
+            overflowX: 'auto',
+            justifyContent: 'space-between',
+            alignItems: 'center'
           }}>
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                style={{
-                  padding: '18px 28px',
-                  background: activeTab === tab.id ? '#0f1419' : 'transparent',
-                  color: activeTab === tab.id ? '#3b82f6' : '#8b92a7',
-                  border: 'none',
-                  borderBottom: activeTab === tab.id ? '2px solid #3b82f6' : '2px solid transparent',
-                  cursor: 'pointer',
-                  fontSize: '15px',
-                  fontWeight: activeTab === tab.id ? 600 : 400,
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {tab.label} ({tab.count})
-              </button>
-            ))}
+            <div style={{ display: 'flex' }}>
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  style={{
+                    padding: '18px 28px',
+                    background: activeTab === tab.id ? '#0f1419' : 'transparent',
+                    color: activeTab === tab.id ? '#3b82f6' : '#8b92a7',
+                    border: 'none',
+                    borderBottom: activeTab === tab.id ? '2px solid #3b82f6' : '2px solid transparent',
+                    cursor: 'pointer',
+                    fontSize: '15px',
+                    fontWeight: activeTab === tab.id ? 600 : 400,
+                    whiteSpace: 'nowrap',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {tab.label} ({tab.count})
+                </button>
+              ))}
+            </div>
+            {selectedItems.length > 0 && (
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', padding: '0 24px' }}>
+                <div style={{ fontSize: '13px', color: '#8b92a7' }}>({selectedItems.length} đã chọn)</div>
+                <button 
+                  onClick={() => {
+                    alert(`In ${selectedItems.length} đơn hàng`)
+                    setSelectedItems([])
+                    setSelectedAll(false)
+                  }}
+                  style={{ 
+                    padding: '6px 14px', 
+                    background: '#3b82f6', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '6px', 
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    fontWeight: 500
+                  }}
+                >
+                  In đơn hàng
+                </button>
+                <button 
+                  onClick={() => {
+                    alert(`Xuất ${selectedItems.length} đơn hàng`)
+                    setSelectedItems([])
+                    setSelectedAll(false)
+                  }}
+                  style={{ 
+                    padding: '6px 14px', 
+                    background: '#10b981', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '6px', 
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    fontWeight: 500
+                  }}
+                >
+                  Xuất Excel
+                </button>
+              </div>
+            )}
           </div>
 
           <div style={{ padding: '16px 24px', borderBottom: '1px solid #2a2f3e', fontSize: '12px', color: '#6b7280' }}>
@@ -160,7 +230,7 @@ function Orders() {
                   <input 
                     type="checkbox" 
                     checked={selectedAll}
-                    onChange={(e) => setSelectedAll(e.target.checked)}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
                     style={{ cursor: 'pointer', width: '20px', height: '20px' }}
                   />
                 </th>
@@ -178,7 +248,7 @@ function Orders() {
               {orders.map((order) => (
                 <tr key={order.id} style={{ borderBottom: '1px solid #2a2f3e', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = '#0f1419'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                   <td style={{ padding: '24px 28px' }}>
-                    <input type="checkbox" checked={selectedAll} readOnly style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
+                    <input type="checkbox" checked={selectedItems.includes(order.id)} onChange={() => handleSelectItem(order.id)} style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
                   </td>
                   <td style={{ padding: '24px 28px' }}>
                     <div style={{ color: '#3b82f6', fontSize: '15px', fontWeight: 600 }}>{order.orderCode}</div>
