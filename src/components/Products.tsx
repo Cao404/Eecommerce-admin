@@ -6,6 +6,7 @@ function Products() {
   const deleteProduct = useStore((state) => state.deleteProduct)
 
   const [selectedAll, setSelectedAll] = useState(false)
+  const [selectedItems, setSelectedItems] = useState<number[]>([])
   const [priceRange, setPriceRange] = useState({ min: '', max: '' })
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
@@ -40,6 +41,28 @@ function Products() {
     const matchesPrice = (!priceRange.min || product.price >= Number(priceRange.min)) && (!priceRange.max || product.price <= Number(priceRange.max))
     return matchesCategory && matchesSearch && matchesPrice
   })
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedAll(checked)
+    if (checked) {
+      setSelectedItems(filteredProducts.map(p => p.id))
+    } else {
+      setSelectedItems([])
+    }
+  }
+
+  const handleSelectItem = (id: number) => {
+    if (selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter(i => i !== id))
+      setSelectedAll(false)
+    } else {
+      const newSelected = [...selectedItems, id]
+      setSelectedItems(newSelected)
+      if (newSelected.length === filteredProducts.length) {
+        setSelectedAll(true)
+      }
+    }
+  }
 
   const handleDelete = (id: number) => {
     if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
@@ -257,7 +280,55 @@ function Products() {
             justifyContent: 'space-between',
             alignItems: 'center'
           }}>
-            <div style={{ fontSize: '14px', color: 'white', fontWeight: 500 }}>Tất cả Danh sách sản phẩm</div>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <div style={{ fontSize: '14px', color: 'white', fontWeight: 500 }}>Tất cả Danh sách sản phẩm</div>
+              {selectedItems.length > 0 && (
+                <>
+                  <div style={{ fontSize: '13px', color: '#8b92a7' }}>({selectedItems.length} đã chọn)</div>
+                  <button 
+                    onClick={() => {
+                      if (confirm(`Bạn có chắc muốn xóa ${selectedItems.length} sản phẩm đã chọn?`)) {
+                        selectedItems.forEach(id => deleteProduct(id))
+                        setSelectedItems([])
+                        setSelectedAll(false)
+                        alert('Đã xóa các sản phẩm!')
+                      }
+                    }}
+                    style={{ 
+                      padding: '6px 14px', 
+                      background: '#ef4444', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '6px', 
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: 500
+                    }}
+                  >
+                    Xóa đã chọn
+                  </button>
+                  <button 
+                    onClick={() => {
+                      alert(`Xuất ${selectedItems.length} sản phẩm ra Excel`)
+                      setSelectedItems([])
+                      setSelectedAll(false)
+                    }}
+                    style={{ 
+                      padding: '6px 14px', 
+                      background: '#10b981', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '6px', 
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: 500
+                    }}
+                  >
+                    Xuất Excel
+                  </button>
+                </>
+              )}
+            </div>
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
               <button 
                 onClick={() => setShowAddModal(true)}
@@ -277,18 +348,22 @@ function Products() {
               >
                 + Thêm sản phẩm
               </button>
-              <select style={{
-                padding: '8px 12px',
-                background: '#0f1419',
-                border: '1px solid #2a2f3e',
-                borderRadius: '6px',
-                color: 'white',
-                fontSize: '13px',
-                cursor: 'pointer'
-              }}>
-                <option>Tháng Này</option>
-                <option>Tuần này</option>
-                <option>Hôm nay</option>
+              <select 
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                style={{
+                  padding: '8px 12px',
+                  background: '#0f1419',
+                  border: '1px solid #2a2f3e',
+                  borderRadius: '6px',
+                  color: 'white',
+                  fontSize: '13px',
+                  cursor: 'pointer'
+                }}>
+                <option value="all">Tất cả trạng thái</option>
+                <option value="in_stock">Còn hàng</option>
+                <option value="low_stock">Sắp hết</option>
+                <option value="out_of_stock">Hết hàng</option>
               </select>
             </div>
           </div>
@@ -304,7 +379,7 @@ function Products() {
                   <input 
                     type="checkbox" 
                     checked={selectedAll}
-                    onChange={(e) => setSelectedAll(e.target.checked)}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
                     style={{ cursor: 'pointer', width: '18px', height: '18px' }}
                   />
                 </th>
@@ -322,7 +397,7 @@ function Products() {
               {filteredProducts.map(product => (
                 <tr key={product.id} style={{ borderBottom: '1px solid #2a2f3e', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = '#0f1419'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                   <td style={{ padding: '24px 28px' }}>
-                    <input type="checkbox" checked={selectedAll} readOnly style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
+                    <input type="checkbox" checked={selectedItems.includes(product.id)} onChange={() => handleSelectItem(product.id)} style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
                   </td>
                   <td style={{ padding: '24px 28px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
