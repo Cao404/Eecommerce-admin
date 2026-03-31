@@ -1,4 +1,9 @@
+import { useState } from 'react'
+import Header from './Header'
+
 function Dashboard() {
+  const [searchTerm, setSearchTerm] = useState('')
+
   const stats = [
     { label: 'Tổng Doanh Thu', value: '458.320.000 ₫', change: '+13.5%', icon: '💰', color: '#f97316', trend: 'up' },
     { label: 'Khách Hàng Mới', value: '12,456', change: '+3.2%', icon: '👥', color: '#3b82f6', trend: 'up' },
@@ -29,8 +34,14 @@ function Dashboard() {
   const maxValue = Math.max(...monthlyData.map(d => Math.max(d.value2024, d.value2023)))
 
   return (
-    <div style={{ padding: '30px', color: 'white' }}>
-      <h1 style={{ margin: '0 0 30px 0', fontSize: '28px', fontWeight: 600 }}>BẢNG ĐIỀU KHIỂN</h1>
+    <div style={{ color: 'white', minHeight: '100vh' }}>
+      <Header 
+        title="BẢNG ĐIỀU KHIỂN"
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Tìm kiếm..."
+      />
+      <div style={{ padding: '30px' }}>
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '30px' }}>
         {stats.map(stat => (
@@ -209,6 +220,7 @@ function Dashboard() {
             ))}
           </div>
         </div>
+      </div>
       </div>
     </div>
   )
