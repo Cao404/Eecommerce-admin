@@ -15,6 +15,7 @@ interface InventoryItem {
 
 function Inventory() {
   const [selectedAll, setSelectedAll] = useState(false)
+  const [selectedItems, setSelectedItems] = useState<number[]>([])
 
   const items: InventoryItem[] = [
     { id: 1, productName: 'iPhone 15 Pro', sku: 'SKU-0001', warehouse: 'Kho Hà Nội', stock: 45, reserved: 8, available: 37, minStock: 10, status: 'in_stock', lastUpdated: '2024-03-25' },
@@ -48,6 +49,28 @@ function Inventory() {
       out_of_stock: 'Hết hàng'
     }
     return texts[status] || status
+  }
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedAll(checked)
+    if (checked) {
+      setSelectedItems(items.map(i => i.id))
+    } else {
+      setSelectedItems([])
+    }
+  }
+
+  const handleSelectItem = (id: number) => {
+    if (selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter(i => i !== id))
+      setSelectedAll(false)
+    } else {
+      const newSelected = [...selectedItems, id]
+      setSelectedItems(newSelected)
+      if (newSelected.length === items.length) {
+        setSelectedAll(true)
+      }
+    }
   }
 
   return (
@@ -198,7 +221,7 @@ function Inventory() {
                   <input 
                     type="checkbox" 
                     checked={selectedAll}
-                    onChange={(e) => setSelectedAll(e.target.checked)}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
                     style={{ cursor: 'pointer', width: '20px', height: '20px' }}
                   />
                 </th>
@@ -216,7 +239,7 @@ function Inventory() {
               {items.map((item) => (
                 <tr key={item.id} style={{ borderBottom: '1px solid #2a2f3e', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = '#0f1419'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                   <td style={{ padding: '24px 28px' }}>
-                    <input type="checkbox" checked={selectedAll} readOnly style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
+                    <input type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => handleSelectItem(item.id)} style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
                   </td>
                   <td style={{ padding: '24px 28px' }}>
                     <div style={{ color: 'white', fontSize: '16px', fontWeight: 500, marginBottom: '4px' }}>{item.productName}</div>
