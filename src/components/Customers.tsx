@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Header from './Header'
 
 interface Customer {
   id: number
@@ -16,8 +17,9 @@ interface Customer {
 function Customers() {
   const [selectedAll, setSelectedAll] = useState(false)
   const [selectedItems, setSelectedItems] = useState<number[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
 
-  const customers: Customer[] = [
+  const allCustomers: Customer[] = [
     { id: 1, name: 'Nguyễn Văn A', email: 'nguyenvana@email.com', phone: '0901234567', avatar: '👨', totalOrders: 15, totalSpent: 45000000, status: 'active', joinDate: '2023-01-15', lastOrder: '2024-03-20' },
     { id: 2, name: 'Trần Thị B', email: 'tranthib@email.com', phone: '0912345678', avatar: '👩', totalOrders: 8, totalSpent: 28000000, status: 'active', joinDate: '2023-03-22', lastOrder: '2024-03-18' },
     { id: 3, name: 'Lê Văn C', email: 'levanc@email.com', phone: '0923456789', avatar: '👨', totalOrders: 23, totalSpent: 67000000, status: 'active', joinDate: '2022-11-10', lastOrder: '2024-03-25' },
@@ -25,6 +27,12 @@ function Customers() {
     { id: 5, name: 'Hoàng Văn E', email: 'hoangvane@email.com', phone: '0945678901', avatar: '👨', totalOrders: 12, totalSpent: 38000000, status: 'active', joinDate: '2023-02-18', lastOrder: '2024-03-22' },
     { id: 6, name: 'Vũ Thị F', email: 'vuthif@email.com', phone: '0956789012', avatar: '👩', totalOrders: 19, totalSpent: 52000000, status: 'active', joinDate: '2022-09-30', lastOrder: '2024-03-24' },
   ]
+
+  const customers = allCustomers.filter(customer =>
+    customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer.phone.includes(searchTerm)
+  )
 
   const stats = [
     { label: 'Tổng Khách Hàng', value: customers.length.toString(), icon: '👥', color: '#3b82f6' },
@@ -56,67 +64,12 @@ function Customers() {
 
   return (
     <div style={{ color: 'white', minHeight: '100vh' }}>
-      <div style={{ 
-        padding: '24px 40px', 
-        borderBottom: '1px solid #2a2f3e',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        background: '#0f1419'
-      }}>
-        <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 600, letterSpacing: '1.2px' }}>QUẢN LÝ KHÁCH HÀNG</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button style={{ 
-            width: '42px',
-            height: '42px',
-            background: '#1a1f2e',
-            border: '1px solid #2a2f3e',
-            borderRadius: '8px',
-            color: '#8b92a7',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px'
-          }}>⚙️</button>
-          <button style={{ 
-            width: '42px',
-            height: '42px',
-            background: '#1a1f2e',
-            border: '1px solid #2a2f3e',
-            borderRadius: '8px',
-            color: '#8b92a7',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px'
-          }}>🔔</button>
-          <div style={{ position: 'relative' }}>
-            <input 
-              type="text"
-              placeholder="Tìm kiếm khách hàng..."
-              style={{
-                padding: '10px 18px 10px 42px',
-                background: '#1a1f2e',
-                border: '1px solid #2a2f3e',
-                borderRadius: '8px',
-                color: 'white',
-                fontSize: '15px',
-                width: '240px'
-              }}
-            />
-            <span style={{ 
-              position: 'absolute',
-              left: '14px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#8b92a7',
-              fontSize: '16px'
-            }}>🔍</span>
-          </div>
-        </div>
-      </div>
+      <Header 
+        title="QUẢN LÝ KHÁCH HÀNG"
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Tìm kiếm khách hàng..."
+      />
 
       <div style={{ padding: '40px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: '30px' }}>
