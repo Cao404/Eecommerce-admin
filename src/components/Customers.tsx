@@ -15,6 +15,7 @@ interface Customer {
 
 function Customers() {
   const [selectedAll, setSelectedAll] = useState(false)
+  const [selectedItems, setSelectedItems] = useState<number[]>([])
 
   const customers: Customer[] = [
     { id: 1, name: 'Nguyễn Văn A', email: 'nguyenvana@email.com', phone: '0901234567', avatar: '👨', totalOrders: 15, totalSpent: 45000000, status: 'active', joinDate: '2023-01-15', lastOrder: '2024-03-20' },
@@ -30,6 +31,28 @@ function Customers() {
     { label: 'Đang Hoạt Động', value: customers.filter(c => c.status === 'active').length.toString(), icon: '✅', color: '#10b981' },
     { label: 'Không Hoạt Động', value: customers.filter(c => c.status === 'inactive').length.toString(), icon: '⏸️', color: '#f59e0b' },
   ]
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedAll(checked)
+    if (checked) {
+      setSelectedItems(customers.map(c => c.id))
+    } else {
+      setSelectedItems([])
+    }
+  }
+
+  const handleSelectItem = (id: number) => {
+    if (selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter(i => i !== id))
+      setSelectedAll(false)
+    } else {
+      const newSelected = [...selectedItems, id]
+      setSelectedItems(newSelected)
+      if (newSelected.length === customers.length) {
+        setSelectedAll(true)
+      }
+    }
+  }
 
   return (
     <div style={{ color: 'white', minHeight: '100vh' }}>
@@ -164,7 +187,7 @@ function Customers() {
                   <input 
                     type="checkbox" 
                     checked={selectedAll}
-                    onChange={(e) => setSelectedAll(e.target.checked)}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
                     style={{ cursor: 'pointer', width: '20px', height: '20px' }}
                   />
                 </th>
@@ -182,7 +205,7 @@ function Customers() {
               {customers.map((customer) => (
                 <tr key={customer.id} style={{ borderBottom: '1px solid #2a2f3e', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = '#0f1419'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                   <td style={{ padding: '24px 28px' }}>
-                    <input type="checkbox" checked={selectedAll} readOnly style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
+                    <input type="checkbox" checked={selectedItems.includes(customer.id)} onChange={() => handleSelectItem(customer.id)} style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
                   </td>
                   <td style={{ padding: '24px 28px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
