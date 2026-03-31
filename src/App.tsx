@@ -39,15 +39,15 @@ function App() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'system-ui, -apple-system, sans-serif', background: '#0f1419' }}>
-      <nav style={{ width: '280px', background: '#1c2536', color: '#8b92a7', padding: '0', borderRight: '1px solid #2d3748', position: 'relative' }}>
+      <nav style={{ width: '280px', background: '#1c2536', color: '#8b92a7', padding: '0', borderRight: '1px solid #2d3748', position: 'fixed', height: '100vh', display: 'flex', flexDirection: 'column' }}>
         <div style={{ padding: '24px', borderBottom: '1px solid #2d3748' }}>
           <h2 style={{ margin: 0, color: 'white', fontSize: '20px', fontWeight: 700 }}>📦 shop.vn</h2>
         </div>
         
         <div style={{ 
-          padding: '12px 0 100px', 
+          padding: '12px 0', 
           overflowY: 'auto', 
-          maxHeight: 'calc(100vh - 180px)',
+          flex: 1,
           scrollbarWidth: 'none',
           msOverflowStyle: 'none'
         }}
@@ -117,10 +117,6 @@ function App() {
         </div>
         
         <div style={{ 
-          position: 'absolute', 
-          bottom: 0, 
-          left: 0, 
-          right: 0, 
           padding: '20px 24px', 
           background: '#1c2536',
           borderTop: '1px solid #2d3748'
@@ -163,7 +159,7 @@ function App() {
         </div>
       </nav>
       
-      <main style={{ flex: 1, background: '#0f1419', minHeight: '100vh' }}>
+      <main style={{ flex: 1, background: '#0f1419', minHeight: '100vh', marginLeft: '280px' }}>
         {currentPage === 'dashboard' && <Dashboard />}
         {currentPage === 'products' && <Products />}
         {currentPage === 'category' && <Category />}
