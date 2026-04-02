@@ -157,15 +157,6 @@ function Category() {
     }
   }
 
-  const handleToggleStatus = (id: number) => {
-    const category = categories.find(c => c.id === id)
-    if (category) {
-      updateCategory(id, {
-        status: category.status === 'active' ? 'inactive' : 'active'
-      })
-    }
-  }
-
   const handleViewDetail = (category: Category) => {
     setSelectedCategoryId(category.id)
     setShowDetailModal(true)
@@ -351,10 +342,9 @@ function Category() {
                   <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>{category.description}</td>
                   <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px', textAlign: 'center' }}>{category.productCount}</td>
                   <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>{category.parentCategory}</td>
-                  <td style={{ padding: '24px 28px', textAlign: 'center' }}>
-                    <button
-                      onClick={() => handleToggleStatus(category.id)}
-                      style={{ 
+                  <td style={{ padding: '24px 28px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <span style={{ 
                         padding: '6px 14px', 
                         borderRadius: '6px', 
                         fontSize: '13px',
@@ -369,7 +359,8 @@ function Category() {
                       onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                     >
                       {category.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
-                    </button>
+                    </span>
+                    </div>
                   </td>
                   <td style={{ padding: '24px 28px', textAlign: 'center' }}>
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
