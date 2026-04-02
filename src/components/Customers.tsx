@@ -194,17 +194,19 @@ function Customers() {
                   <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>
                     {new Date(customer.lastOrder).toLocaleDateString('vi-VN')}
                   </td>
-                  <td style={{ padding: '24px 28px', textAlign: 'center' }}>
-                    <span style={{ 
-                      padding: '6px 12px', 
-                      borderRadius: '6px', 
-                      fontSize: '13px',
-                      fontWeight: 600,
-                      background: customer.status === 'active' ? '#10b98120' : '#6b728020',
-                      color: customer.status === 'active' ? '#10b981' : '#6b7280'
-                    }}>
-                      {customer.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
-                    </span>
+                  <td style={{ padding: '24px 28px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <span style={{ 
+                        padding: '6px 12px', 
+                        borderRadius: '6px', 
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        background: customer.status === 'active' ? '#10b98120' : '#6b728020',
+                        color: customer.status === 'active' ? '#10b981' : '#6b7280'
+                      }}>
+                        {customer.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
+                      </span>
+                    </div>
                   </td>
                   <td style={{ padding: '24px 28px', textAlign: 'center' }}>
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
