@@ -220,17 +220,19 @@ function Orders() {
                   <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>
                     {new Date(order.date).toLocaleDateString('vi-VN')}
                   </td>
-                  <td style={{ padding: '24px 28px', textAlign: 'center' }}>
-                    <span style={{ 
-                      padding: '6px 12px', 
-                      borderRadius: '6px', 
-                      fontSize: '13px',
-                      fontWeight: 600,
-                      background: `${getStatusColor(order.status)}20`,
-                      color: getStatusColor(order.status)
-                    }}>
-                      {getStatusText(order.status)}
-                    </span>
+                  <td style={{ padding: '24px 28px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <span style={{ 
+                        padding: '6px 12px', 
+                        borderRadius: '6px', 
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        background: `${getStatusColor(order.status)}20`,
+                        color: getStatusColor(order.status)
+                      }}>
+                        {getStatusText(order.status)}
+                      </span>
+                    </div>
                   </td>
                   <td style={{ padding: '24px 28px', textAlign: 'center' }}>
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
