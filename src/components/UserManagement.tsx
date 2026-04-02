@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import Header from './Header'
 
 interface User {
   id: number
@@ -17,15 +16,28 @@ function UserManagement() {
   const [selectedAll, setSelectedAll] = useState(false)
   const [selectedItems, setSelectedItems] = useState<number[]>([])
   const [searchTerm, setSearchTerm] = useState('')
-
-  const users: User[] = [
+  const [showDetailModal, setShowDetailModal] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
+  
+  const [users, setUsers] = useState<User[]>([
     { id: 1, name: 'Admin Nguyễn', email: 'admin@shop.vn', phone: '0901111111', role: 'admin', status: 'active', registeredDate: '2023-01-01', lastLogin: '2024-03-31' },
     { id: 2, name: 'Trần Văn User', email: 'user1@gmail.com', phone: '0902222222', role: 'user', status: 'active', registeredDate: '2024-01-15', lastLogin: '2024-03-30' },
     { id: 4, name: 'Phạm Văn Banned', email: 'banned@gmail.com', phone: '0904444444', role: 'user', status: 'banned', registeredDate: '2024-01-20', lastLogin: '2024-03-15' },
     { id: 5, name: 'Hoàng Thị User2', email: 'user2@gmail.com', phone: '0905555555', role: 'user', status: 'active', registeredDate: '2024-02-10', lastLogin: '2024-03-29' },
     { id: 7, name: 'Đỗ Thị Inactive', email: 'inactive@gmail.com', phone: '0907777777', role: 'user', status: 'inactive', registeredDate: '2024-01-05', lastLogin: '2024-02-01' },
     { id: 8, name: 'Bùi Văn User3', email: 'user3@gmail.com', phone: '0908888888', role: 'user', status: 'active', registeredDate: '2024-03-01', lastLogin: '2024-03-30' },
-  ]
+  ])
+
+  const [newUser, setNewUser] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    role: 'user' as 'admin' | 'user',
+    password: ''
+  })
+
+  const selectedUser = selectedUserId ? users.find(u => u.id === selectedUserId) : null
 
   const tabs = [
     { id: 'all', label: 'Tất cả', count: users.length },
@@ -43,7 +55,6 @@ function UserManagement() {
     ? users.filter(u => u.status === 'banned')
     : users.filter(u => u.role === activeTab)
 
-  // Apply search filter
   const searchedUsers = filteredUsers.filter(user => 
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -106,14 +117,115 @@ function UserManagement() {
     }
   }
 
+  const handleBanUser = (id: number) => {
+    if (confirm('Bạn có chắc muốn khóa người dùng này?')) {
+      setUsers(users.map(u => u.id === id ? { ...u, status: 'banned' as const } : u))
+      alert('Đã khóa người dùng!')
+    }
+  }
+
+  const handleUnbanUser = (id: number) => {
+    if (confirm('Bạn có chắc muốn mở khóa người dùng này?')) {
+      setUsers(users.map(u => u.id === id ? { ...u, status: 'active' as const } : u))
+      alert('Đã mở khóa người dùng!')
+    }
+  }
+
+  const handleViewDetail = (user: User) => {
+    setSelectedUserId(user.id)
+    setShowDetailModal(true)
+  }
+
+  const handleAddUser = () => {
+    if (!newUser.name || !newUser.email || !newUser.phone || !newUser.password) {
+      alert('Vui lòng điền đầy đủ thông tin!')
+      return
+    }
+
+    const newId = Math.max(...users.map(u => u.id)) + 1
+    const today = new Date().toISOString().split('T')[0]
+    
+    setUsers([...users, {
+      id: newId,
+      name: newUser.name,
+      email: newUser.email,
+      phone: newUser.phone,
+      role: newUser.role,
+      status: 'active',
+      registeredDate: today,
+      lastLogin: today
+    }])
+
+    setNewUser({ name: '', email: '', phone: '', role: 'user', password: '' })
+    setShowAddModal(false)
+    alert('Đã tạo người dùng thành công!')
+  }
+
   return (
     <div style={{ color: 'white', minHeight: '100vh' }}>
-      <Header 
-        title="QUẢN LÝ NGƯỜI DÙNG"
-        searchValue={searchTerm}
-        onSearchChange={setSearchTerm}
-        searchPlaceholder="Tìm kiếm người dùng..."
-      />
+      <div style={{ 
+        padding: '24px 40px', 
+        borderBottom: '1px solid #2a2f3e',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        background: '#0f1419'
+      }}>
+        <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 600, letterSpacing: '1.2px' }}>QUẢN LÝ NGƯỜI DÙNG</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <button style={{ 
+            width: '42px',
+            height: '42px',
+            background: '#1a1f2e',
+            border: '1px solid #2a2f3e',
+            borderRadius: '8px',
+            color: '#8b92a7',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '18px'
+          }}>⚙️</button>
+          <button style={{ 
+            width: '42px',
+            height: '42px',
+            background: '#1a1f2e',
+            border: '1px solid #2a2f3e',
+            borderRadius: '8px',
+            color: '#8b92a7',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '18px'
+          }}>🔔</button>
+          <div style={{ position: 'relative' }}>
+            <input 
+              type="text"
+              placeholder="Tìm kiếm người dùng..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                padding: '10px 18px 10px 42px',
+                background: '#1a1f2e',
+                border: '1px solid #2a2f3e',
+                borderRadius: '8px',
+                color: 'white',
+                fontSize: '15px',
+                width: '240px'
+              }}
+            />
+            <span style={{ 
+              position: 'absolute',
+              left: '14px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: '#8b92a7',
+              fontSize: '16px'
+            }}>🔍</span>
+          </div>
+        </div>
+      </div>
 
       <div style={{ padding: '40px' }}>
         <div style={{ display: 'flex', gap: '12px', marginBottom: '30px', overflowX: 'auto' }}>
@@ -163,16 +275,22 @@ function UserManagement() {
                 <option>Tên A-Z</option>
                 <option>Tên Z-A</option>
               </select>
-              <button style={{ 
-                padding: '8px 18px', 
-                background: '#f97316', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '6px', 
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: 600
-              }}>
+              <button 
+                onClick={() => setShowAddModal(true)}
+                style={{ 
+                  padding: '8px 18px', 
+                  background: '#f97316', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '6px', 
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  transition: 'background 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#ea580c'}
+                onMouseLeave={(e) => e.currentTarget.style.background = '#f97316'}
+              >
                 + Tạo Người Dùng
               </button>
             </div>
@@ -257,43 +375,61 @@ function UserManagement() {
                   <td style={{ padding: '24px 28px', textAlign: 'center' }}>
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
                       {user.status === 'active' && (
-                        <button style={{ 
-                          padding: '8px 16px', 
-                          background: '#ef4444', 
-                          color: 'white', 
-                          border: 'none', 
-                          borderRadius: '6px', 
-                          cursor: 'pointer',
-                          fontSize: '13px',
-                          fontWeight: 500
-                        }}>
+                        <button 
+                          onClick={() => handleBanUser(user.id)}
+                          style={{ 
+                            padding: '8px 16px', 
+                            background: '#ef4444', 
+                            color: 'white', 
+                            border: 'none', 
+                            borderRadius: '6px', 
+                            cursor: 'pointer',
+                            fontSize: '13px',
+                            fontWeight: 500,
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = '#dc2626'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = '#ef4444'}
+                        >
                           Khóa
                         </button>
                       )}
                       {user.status === 'banned' && (
-                        <button style={{ 
+                        <button 
+                          onClick={() => handleUnbanUser(user.id)}
+                          style={{ 
+                            padding: '8px 16px', 
+                            background: '#10b981', 
+                            color: 'white', 
+                            border: 'none', 
+                            borderRadius: '6px', 
+                            cursor: 'pointer',
+                            fontSize: '13px',
+                            fontWeight: 500,
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = '#059669'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = '#10b981'}
+                        >
+                          Mở khóa
+                        </button>
+                      )}
+                      <button 
+                        onClick={() => handleViewDetail(user)}
+                        style={{ 
                           padding: '8px 16px', 
-                          background: '#10b981', 
+                          background: '#3b82f6', 
                           color: 'white', 
                           border: 'none', 
                           borderRadius: '6px', 
                           cursor: 'pointer',
                           fontSize: '13px',
-                          fontWeight: 500
-                        }}>
-                          Mở khóa
-                        </button>
-                      )}
-                      <button style={{ 
-                        padding: '8px 16px', 
-                        background: '#3b82f6', 
-                        color: 'white', 
-                        border: 'none', 
-                        borderRadius: '6px', 
-                        cursor: 'pointer',
-                        fontSize: '13px',
-                        fontWeight: 500
-                      }}>
+                          fontWeight: 500,
+                          transition: 'background 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = '#2563eb'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = '#3b82f6'}
+                      >
                         Chi tiết
                       </button>
                     </div>
