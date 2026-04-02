@@ -213,17 +213,19 @@ function Inventory() {
                   <td style={{ padding: '24px 28px', textAlign: 'center', color: '#8b92a7', fontSize: '15px' }}>
                     {item.minStock}
                   </td>
-                  <td style={{ padding: '24px 28px', textAlign: 'center' }}>
-                    <span style={{ 
-                      padding: '6px 12px', 
-                      borderRadius: '6px', 
-                      fontSize: '13px',
-                      fontWeight: 600,
-                      background: `${getStatusColor(item.status)}20`,
-                      color: getStatusColor(item.status)
-                    }}>
-                      {getStatusText(item.status)}
-                    </span>
+                  <td style={{ padding: '24px 28px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <span style={{ 
+                        padding: '6px 12px', 
+                        borderRadius: '6px', 
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        background: `${getStatusColor(item.status)}20`,
+                        color: getStatusColor(item.status)
+                      }}>
+                        {getStatusText(item.status)}
+                      </span>
+                    </div>
                   </td>
                   <td style={{ padding: '24px 28px', textAlign: 'center' }}>
                     <button style={{ 
