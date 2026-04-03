@@ -1,104 +1,72 @@
 import { useState } from 'react'
+import Header from './Header'
 
 interface User {
   id: number
   name: string
   email: string
   phone: string
-  role: 'admin' | 'user'
-  status: 'active' | 'inactive' | 'banned'
-  registeredDate: string
+  role: string
+  status: 'active' | 'locked'
   lastLogin: string
 }
 
 function UserManagement() {
-  const [activeTab, setActiveTab] = useState<'all' | 'admin' | 'user' | 'active' | 'banned'>('all')
-  const [selectedAll, setSelectedAll] = useState(false)
-  const [selectedItems, setSelectedItems] = useState<number[]>([])
-  const [searchTerm, setSearchTerm] = useState('')
-  const [showDetailModal, setShowDetailModal] = useState(false)
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
-  
   const [users, setUsers] = useState<User[]>([
-    { id: 1, name: 'Admin Nguyễn', email: 'admin@shop.vn', phone: '0901111111', role: 'admin', status: 'active', registeredDate: '2023-01-01', lastLogin: '2024-03-31' },
-    { id: 2, name: 'Trần Văn User', email: 'user1@gmail.com', phone: '0902222222', role: 'user', status: 'active', registeredDate: '2024-01-15', lastLogin: '2024-03-30' },
-    { id: 4, name: 'Phạm Văn Banned', email: 'banned@gmail.com', phone: '0904444444', role: 'user', status: 'banned', registeredDate: '2024-01-20', lastLogin: '2024-03-15' },
-    { id: 5, name: 'Hoàng Thị User2', email: 'user2@gmail.com', phone: '0905555555', role: 'user', status: 'active', registeredDate: '2024-02-10', lastLogin: '2024-03-29' },
-    { id: 7, name: 'Đỗ Thị Inactive', email: 'inactive@gmail.com', phone: '0907777777', role: 'user', status: 'inactive', registeredDate: '2024-01-05', lastLogin: '2024-02-01' },
-    { id: 8, name: 'Bùi Văn User3', email: 'user3@gmail.com', phone: '0908888888', role: 'user', status: 'active', registeredDate: '2024-03-01', lastLogin: '2024-03-30' },
+    { id: 1, name: 'Nguyễn Văn A', email: 'nguyenvana@email.com', phone: '0901234567', role: 'Admin', status: 'active', lastLogin: '2024-01-15 10:30' },
+    { id: 2, name: 'Trần Thị B', email: 'tranthib@email.com', phone: '0912345678', role: 'Nhân viên', status: 'active', lastLogin: '2024-01-14 15:20' },
+    { id: 3, name: 'Lê Văn C', email: 'levanc@email.com', phone: '0923456789', role: 'Quản lý', status: 'locked', lastLogin: '2024-01-10 09:15' },
+    { id: 4, name: 'Phạm Thị D', email: 'phamthid@email.com', phone: '0934567890', role: 'Nhân viên', status: 'active', lastLogin: '2024-01-15 14:45' },
+    { id: 5, name: 'Hoàng Văn E', email: 'hoangvane@email.com', phone: '0945678901', role: 'Nhân viên', status: 'active', lastLogin: '2024-01-13 11:00' },
+    { id: 6, name: 'Vũ Thị F', email: 'vuthif@email.com', phone: '0956789012', role: 'Quản lý', status: 'active', lastLogin: '2024-01-15 16:20' },
+    { id: 7, name: 'Đặng Văn G', email: 'dangvang@email.com', phone: '0967890123', role: 'Nhân viên', status: 'active', lastLogin: '2024-01-14 08:30' },
+    { id: 8, name: 'Bùi Thị H', email: 'buithih@email.com', phone: '0978901234', role: 'Nhân viên', status: 'locked', lastLogin: '2024-01-12 13:45' },
+    { id: 9, name: 'Dương Văn I', email: 'duongvani@email.com', phone: '0989012345', role: 'Admin', status: 'active', lastLogin: '2024-01-15 09:00' },
+    { id: 10, name: 'Trịnh Thị K', email: 'trinhthik@email.com', phone: '0990123456', role: 'Nhân viên', status: 'active', lastLogin: '2024-01-14 17:30' },
+    { id: 11, name: 'Phan Văn L', email: 'phanvanl@email.com', phone: '0901234568', role: 'Quản lý', status: 'active', lastLogin: '2024-01-15 12:15' },
+    { id: 12, name: 'Võ Thị M', email: 'vothim@email.com', phone: '0912345679', role: 'Nhân viên', status: 'active', lastLogin: '2024-01-13 14:00' },
+    { id: 13, name: 'Ngô Văn N', email: 'ngovann@email.com', phone: '0923456780', role: 'Nhân viên', status: 'locked', lastLogin: '2024-01-11 10:20' },
+    { id: 14, name: 'Lý Thị O', email: 'lythio@email.com', phone: '0934567891', role: 'Admin', status: 'active', lastLogin: '2024-01-15 11:45' },
+    { id: 15, name: 'Mai Văn P', email: 'maivanp@email.com', phone: '0945678902', role: 'Nhân viên', status: 'active', lastLogin: '2024-01-14 16:30' },
   ])
+
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'locked'>('all')
+  const [selectedItems, setSelectedItems] = useState<number[]>([])
+  const [selectedAll, setSelectedAll] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [showDetailModal, setShowDetailModal] = useState(false)
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 8
 
   const [newUser, setNewUser] = useState({
     name: '',
     email: '',
     phone: '',
-    role: 'user' as 'admin' | 'user',
+    role: '',
     password: ''
   })
 
   const selectedUser = selectedUserId ? users.find(u => u.id === selectedUserId) : null
 
-  const tabs = [
-    { id: 'all', label: 'Tất cả', count: users.length },
-    { id: 'admin', label: 'Admin', count: users.filter(u => u.role === 'admin').length },
-    { id: 'user', label: 'Người Dùng', count: users.filter(u => u.role === 'user').length },
-    { id: 'active', label: 'Đang hoạt động', count: users.filter(u => u.status === 'active').length },
-    { id: 'banned', label: 'Đã khóa', count: users.filter(u => u.status === 'banned').length },
-  ]
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.phone.includes(searchTerm)
+    const matchesStatus = statusFilter === 'all' || user.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
 
-  const filteredUsers = activeTab === 'all' 
-    ? users 
-    : activeTab === 'active'
-    ? users.filter(u => u.status === 'active')
-    : activeTab === 'banned'
-    ? users.filter(u => u.status === 'banned')
-    : users.filter(u => u.role === activeTab)
-
-  const searchedUsers = filteredUsers.filter(user => 
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.phone.includes(searchTerm)
-  )
-
-  const getRoleText = (role: string) => {
-    const texts: Record<string, string> = {
-      admin: 'Quản trị viên',
-      user: 'Người dùng'
-    }
-    return texts[role] || role
-  }
-
-  const getRoleColor = (role: string) => {
-    const colors: Record<string, string> = {
-      admin: '#8b5cf6',
-      user: '#3b82f6'
-    }
-    return colors[role] || '#6b7280'
-  }
-
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      active: '#10b981',
-      inactive: '#6b7280',
-      banned: '#ef4444'
-    }
-    return colors[status] || '#6b7280'
-  }
-
-  const getStatusText = (status: string) => {
-    const texts: Record<string, string> = {
-      active: 'Hoạt động',
-      inactive: 'Không hoạt động',
-      banned: 'Đã khóa'
-    }
-    return texts[status] || status
-  }
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentUsers = filteredUsers.slice(startIndex, endIndex)
 
   const handleSelectAll = (checked: boolean) => {
     setSelectedAll(checked)
     if (checked) {
-      setSelectedItems(searchedUsers.map(u => u.id))
+      setSelectedItems(filteredUsers.map(u => u.id))
     } else {
       setSelectedItems([])
     }
@@ -111,40 +79,19 @@ function UserManagement() {
     } else {
       const newSelected = [...selectedItems, id]
       setSelectedItems(newSelected)
-      if (newSelected.length === searchedUsers.length) {
+      if (newSelected.length === filteredUsers.length) {
         setSelectedAll(true)
       }
     }
   }
 
-  const handleBanUser = (id: number) => {
-    if (confirm('Bạn có chắc muốn khóa người dùng này?')) {
-      setUsers(users.map(u => u.id === id ? { ...u, status: 'banned' as const } : u))
-      alert('Đã khóa người dùng!')
-    }
-  }
-
-  const handleUnbanUser = (id: number) => {
-    if (confirm('Bạn có chắc muốn mở khóa người dùng này?')) {
-      setUsers(users.map(u => u.id === id ? { ...u, status: 'active' as const } : u))
-      alert('Đã mở khóa người dùng!')
-    }
-  }
-
-  const handleViewDetail = (user: User) => {
-    setSelectedUserId(user.id)
-    setShowDetailModal(true)
-  }
-
   const handleAddUser = () => {
-    if (!newUser.name || !newUser.email || !newUser.phone || !newUser.password) {
+    if (!newUser.name || !newUser.email || !newUser.phone || !newUser.role || !newUser.password) {
       alert('Vui lòng điền đầy đủ thông tin!')
       return
     }
 
     const newId = Math.max(...users.map(u => u.id)) + 1
-    const today = new Date().toISOString().split('T')[0]
-    
     setUsers([...users, {
       id: newId,
       name: newUser.name,
@@ -152,102 +99,66 @@ function UserManagement() {
       phone: newUser.phone,
       role: newUser.role,
       status: 'active',
-      registeredDate: today,
-      lastLogin: today
+      lastLogin: 'Chưa đăng nhập'
     }])
 
-    setNewUser({ name: '', email: '', phone: '', role: 'user', password: '' })
+    setNewUser({ name: '', email: '', phone: '', role: '', password: '' })
     setShowAddModal(false)
     alert('Đã tạo người dùng thành công!')
   }
 
+  const handleLockUsers = () => {
+    setUsers(users.map(u => 
+      selectedItems.includes(u.id) ? { ...u, status: 'locked' as const } : u
+    ))
+    setSelectedItems([])
+    setSelectedAll(false)
+    alert('Đã khóa tài khoản!')
+  }
+
+  const handleUnlockUsers = () => {
+    setUsers(users.map(u => 
+      selectedItems.includes(u.id) ? { ...u, status: 'active' as const } : u
+    ))
+    setSelectedItems([])
+    setSelectedAll(false)
+    alert('Đã mở khóa tài khoản!')
+  }
+
+  const handleViewDetail = (user: User) => {
+    setSelectedUserId(user.id)
+    setShowDetailModal(true)
+  }
+
+  const handleToggleUserStatus = (userId: number) => {
+    setUsers(users.map(u => 
+      u.id === userId ? { ...u, status: u.status === 'active' ? 'locked' as const : 'active' as const } : u
+    ))
+  }
+
+  const stats = [
+    { label: 'Tổng người dùng', value: users.length, subtext: 'Tất cả tài khoản' },
+    { label: 'Đang hoạt động', value: users.filter(u => u.status === 'active').length, subtext: 'Tài khoản hoạt động' },
+    { label: 'Đã khóa', value: users.filter(u => u.status === 'locked').length, subtext: 'Tài khoản bị khóa' },
+  ]
+
   return (
     <div style={{ color: 'white', minHeight: '100vh' }}>
-      <div style={{ 
-        padding: '24px 40px', 
-        borderBottom: '1px solid #2a2f3e',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        background: '#0f1419'
-      }}>
-        <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 600, letterSpacing: '1.2px' }}>QUẢN LÝ NGƯỜI DÙNG</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button style={{ 
-            width: '42px',
-            height: '42px',
-            background: '#1a1f2e',
-            border: '1px solid #2a2f3e',
-            borderRadius: '8px',
-            color: '#8b92a7',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px'
-          }}>⚙️</button>
-          <button style={{ 
-            width: '42px',
-            height: '42px',
-            background: '#1a1f2e',
-            border: '1px solid #2a2f3e',
-            borderRadius: '8px',
-            color: '#8b92a7',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px'
-          }}>🔔</button>
-          <div style={{ position: 'relative' }}>
-            <input 
-              type="text"
-              placeholder="Tìm kiếm người dùng..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                padding: '10px 18px 10px 42px',
-                background: '#1a1f2e',
-                border: '1px solid #2a2f3e',
-                borderRadius: '8px',
-                color: 'white',
-                fontSize: '15px',
-                width: '240px'
-              }}
-            />
-            <span style={{ 
-              position: 'absolute',
-              left: '14px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#8b92a7',
-              fontSize: '16px'
-            }}>🔍</span>
-          </div>
-        </div>
-      </div>
+      <Header 
+        title="QUẢN LÝ NGƯỜI DÙNG"
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Tìm kiếm người dùng..."
+      />
 
       <div style={{ padding: '40px' }}>
-        <div style={{ display: 'flex', gap: '12px', marginBottom: '30px', overflowX: 'auto' }}>
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              style={{
-                padding: '12px 24px',
-                background: activeTab === tab.id ? '#f97316' : '#1a1f2e',
-                color: activeTab === tab.id ? 'white' : '#8b92a7',
-                border: '1px solid #2a2f3e',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: 600,
-                whiteSpace: 'nowrap',
-                transition: 'all 0.2s'
-              }}
-            >
-              {tab.label} ({tab.count})
-            </button>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '30px' }}>
+          {stats.map((stat, idx) => (
+            <div key={idx} style={{ background: '#1a1f2e', padding: '24px', borderRadius: '10px', border: '1px solid #2a2f3e' }}>
+              <div style={{ fontSize: '36px', fontWeight: 700, color: 'white', marginBottom: '8px' }}>{stat.value}</div>
+              <div style={{ fontSize: '15px', color: '#8b92a7', marginBottom: '4px' }}>{stat.label}</div>
+              {stat.subtext && <div style={{ fontSize: '13px', color: '#6b7280' }}>{stat.subtext}</div>}
+            </div>
           ))}
         </div>
 
@@ -259,22 +170,45 @@ function UserManagement() {
             justifyContent: 'space-between',
             alignItems: 'center'
           }}>
-            <div style={{ fontSize: '16px', color: 'white', fontWeight: 500 }}>Danh sách Người Dùng</div>
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <select style={{
-                padding: '8px 12px',
-                background: '#0f1419',
-                border: '1px solid #2a2f3e',
-                borderRadius: '6px',
-                color: 'white',
-                fontSize: '13px',
-                cursor: 'pointer'
-              }}>
-                <option>Sắp xếp: Mới nhất</option>
-                <option>Cũ nhất</option>
-                <option>Tên A-Z</option>
-                <option>Tên Z-A</option>
-              </select>
+              <div style={{ fontSize: '14px', color: 'white', fontWeight: 500 }}>Danh sách người dùng</div>
+              {selectedItems.length > 0 && (
+                <>
+                  <div style={{ fontSize: '13px', color: '#8b92a7' }}>({selectedItems.length} đã chọn)</div>
+                  <button 
+                    onClick={handleLockUsers}
+                    style={{ 
+                      padding: '6px 14px', 
+                      background: '#ef4444', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '6px', 
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: 500
+                    }}
+                  >
+                    Khóa
+                  </button>
+                  <button 
+                    onClick={handleUnlockUsers}
+                    style={{ 
+                      padding: '6px 14px', 
+                      background: '#10b981', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '6px', 
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: 500
+                    }}
+                  >
+                    Mở khóa
+                  </button>
+                </>
+              )}
+            </div>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
               <button 
                 onClick={() => setShowAddModal(true)}
                 style={{ 
@@ -293,11 +227,27 @@ function UserManagement() {
               >
                 + Tạo Người Dùng
               </button>
+              <select 
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'locked')}
+                style={{
+                  padding: '8px 12px',
+                  background: '#0f1419',
+                  border: '1px solid #2a2f3e',
+                  borderRadius: '6px',
+                  color: 'white',
+                  fontSize: '13px',
+                  cursor: 'pointer'
+                }}>
+                <option value="all">Tất cả</option>
+                <option value="active">Đang hoạt động</option>
+                <option value="locked">Đã khóa</option>
+              </select>
             </div>
           </div>
           
           <div style={{ padding: '16px 24px', borderBottom: '1px solid #2a2f3e', fontSize: '12px', color: '#6b7280' }}>
-            Hiện thị 1-{searchedUsers.length} trong {searchedUsers.length} kết quả
+            Hiện thị {startIndex + 1}-{Math.min(endIndex, filteredUsers.length)} trong {filteredUsers.length} kết quả
           </div>
 
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -311,119 +261,58 @@ function UserManagement() {
                     style={{ cursor: 'pointer', width: '20px', height: '20px' }}
                   />
                 </th>
-                <th style={{ padding: '20px 28px', textAlign: 'left', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>NGƯỜI DÙNG</th>
-                <th style={{ padding: '20px 28px', textAlign: 'left', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>EMAIL / SĐT</th>
+                <th style={{ padding: '20px 28px', textAlign: 'left', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>STT</th>
+                <th style={{ padding: '20px 28px', textAlign: 'left', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>TÊN</th>
+                <th style={{ padding: '20px 28px', textAlign: 'left', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>EMAIL</th>
+                <th style={{ padding: '20px 28px', textAlign: 'left', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>SỐ ĐIỆN THOẠI</th>
                 <th style={{ padding: '20px 28px', textAlign: 'left', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>VAI TRÒ</th>
-                <th style={{ padding: '20px 28px', textAlign: 'left', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>TRẠNG THÁI</th>
-                <th style={{ padding: '20px 28px', textAlign: 'left', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>NGÀY ĐĂNG KÝ</th>
-                <th style={{ padding: '20px 28px', textAlign: 'center', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>HÀNH ĐỘNG</th>
+                <th style={{ padding: '20px 28px', textAlign: 'center', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>TRẠNG THÁI</th>
+                <th style={{ padding: '20px 28px', textAlign: 'center', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>THAO TÁC</th>
               </tr>
             </thead>
             <tbody>
-              {searchedUsers.map((user) => (
+              {currentUsers.map((user, index) => (
                 <tr key={user.id} style={{ borderBottom: '1px solid #2a2f3e', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = '#0f1419'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                   <td style={{ padding: '24px 28px' }}>
                     <input type="checkbox" checked={selectedItems.includes(user.id)} onChange={() => handleSelectItem(user.id)} style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
                   </td>
+                  <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>{startIndex + index + 1}</td>
+                  <td style={{ padding: '24px 28px', color: 'white', fontSize: '16px', fontWeight: 500 }}>{user.name}</td>
+                  <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>{user.email}</td>
+                  <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>{user.phone}</td>
+                  <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>{user.role}</td>
                   <td style={{ padding: '24px 28px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                      <div style={{ 
-                        width: '48px', 
-                        height: '48px', 
-                        borderRadius: '50%', 
-                        background: '#374151',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '20px'
-                      }}>👤</div>
-                      <div>
-                        <div style={{ color: 'white', fontSize: '16px', fontWeight: 500 }}>{user.name}</div>
-                        <div style={{ color: '#6b7280', fontSize: '13px' }}>Đăng nhập: {user.lastLogin}</div>
-                      </div>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <span style={{ 
+                        padding: '6px 14px', 
+                        borderRadius: '6px', 
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        background: user.status === 'active' ? '#10b98120' : '#ef444420',
+                        color: user.status === 'active' ? '#10b981' : '#ef4444',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                      onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                    >
+                      {user.status === 'active' ? 'Hoạt động' : 'Đã khóa'}
+                    </span>
                     </div>
                   </td>
-                  <td style={{ padding: '24px 28px' }}>
-                    <div style={{ color: '#8b92a7', fontSize: '14px', marginBottom: '4px' }}>{user.email}</div>
-                    <div style={{ color: '#6b7280', fontSize: '13px' }}>{user.phone}</div>
-                  </td>
-                  <td style={{ padding: '24px 28px' }}>
-                    <span style={{ 
-                      padding: '6px 12px', 
-                      borderRadius: '6px', 
-                      fontSize: '13px',
-                      fontWeight: 600,
-                      background: `${getRoleColor(user.role)}20`,
-                      color: getRoleColor(user.role)
-                    }}>
-                      {getRoleText(user.role)}
-                    </span>
-                  </td>
-                  <td style={{ padding: '24px 28px' }}>
-                    <span style={{ 
-                      padding: '6px 12px', 
-                      borderRadius: '6px', 
-                      fontSize: '13px',
-                      fontWeight: 600,
-                      background: `${getStatusColor(user.status)}20`,
-                      color: getStatusColor(user.status)
-                    }}>
-                      {getStatusText(user.status)}
-                    </span>
-                  </td>
-                  <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>{user.registeredDate}</td>
                   <td style={{ padding: '24px 28px', textAlign: 'center' }}>
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                      {user.status === 'active' && (
-                        <button 
-                          onClick={() => handleBanUser(user.id)}
-                          style={{ 
-                            padding: '8px 16px', 
-                            background: '#ef4444', 
-                            color: 'white', 
-                            border: 'none', 
-                            borderRadius: '6px', 
-                            cursor: 'pointer',
-                            fontSize: '13px',
-                            fontWeight: 500,
-                            transition: 'background 0.2s'
-                          }}
-                          onMouseEnter={(e) => e.currentTarget.style.background = '#dc2626'}
-                          onMouseLeave={(e) => e.currentTarget.style.background = '#ef4444'}
-                        >
-                          Khóa
-                        </button>
-                      )}
-                      {user.status === 'banned' && (
-                        <button 
-                          onClick={() => handleUnbanUser(user.id)}
-                          style={{ 
-                            padding: '8px 16px', 
-                            background: '#10b981', 
-                            color: 'white', 
-                            border: 'none', 
-                            borderRadius: '6px', 
-                            cursor: 'pointer',
-                            fontSize: '13px',
-                            fontWeight: 500,
-                            transition: 'background 0.2s'
-                          }}
-                          onMouseEnter={(e) => e.currentTarget.style.background = '#059669'}
-                          onMouseLeave={(e) => e.currentTarget.style.background = '#10b981'}
-                        >
-                          Mở khóa
-                        </button>
-                      )}
                       <button 
                         onClick={() => handleViewDetail(user)}
                         style={{ 
-                          padding: '8px 16px', 
+                          padding: '10px 20px', 
                           background: '#3b82f6', 
                           color: 'white', 
                           border: 'none', 
-                          borderRadius: '6px', 
+                          borderRadius: '7px', 
                           cursor: 'pointer',
-                          fontSize: '13px',
+                          fontSize: '14px',
                           fontWeight: 500,
                           transition: 'background 0.2s'
                         }}
@@ -438,7 +327,345 @@ function UserManagement() {
               ))}
             </tbody>
           </table>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div style={{ 
+              padding: '20px 24px', 
+              borderTop: '1px solid #2a2f3e',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                style={{
+                  padding: '8px 12px',
+                  background: currentPage === 1 ? '#1a1f2e' : '#2a2f3e',
+                  color: currentPage === 1 ? '#6b7280' : 'white',
+                  border: '1px solid #2a2f3e',
+                  borderRadius: '6px',
+                  cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 500
+                }}
+              >
+                ← Trước
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  style={{
+                    padding: '8px 14px',
+                    background: currentPage === page ? '#f97316' : '#2a2f3e',
+                    color: 'white',
+                    border: '1px solid #2a2f3e',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: currentPage === page ? 600 : 500,
+                    minWidth: '40px'
+                  }}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                style={{
+                  padding: '8px 12px',
+                  background: currentPage === totalPages ? '#1a1f2e' : '#2a2f3e',
+                  color: currentPage === totalPages ? '#6b7280' : 'white',
+                  border: '1px solid #2a2f3e',
+                  borderRadius: '6px',
+                  cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 500
+                }}
+              >
+                Sau →
+              </button>
+            </div>
+          )}
         </div>
+
+        {/* Modal Tạo Người Dùng */}
+        {showAddModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}
+          onClick={() => setShowAddModal(false)}
+          >
+            <div style={{
+              background: '#1a1f2e',
+              padding: '32px',
+              borderRadius: '12px',
+              border: '1px solid #2a2f3e',
+              maxWidth: '500px',
+              width: '90%'
+            }}
+            onClick={(e) => e.stopPropagation()}
+            >
+              <h2 style={{ margin: '0 0 24px 0', fontSize: '20px', fontWeight: 600 }}>Tạo Người Dùng Mới</h2>
+              
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#8b92a7' }}>Họ và tên</label>
+                <input 
+                  type="text" 
+                  placeholder="Nhập họ và tên"
+                  value={newUser.name}
+                  onChange={(e) => setNewUser({...newUser, name: e.target.value})}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: '#0f1419',
+                    border: '1px solid #2a2f3e',
+                    borderRadius: '8px',
+                    color: 'white',
+                    fontSize: '15px'
+                  }} 
+                />
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#8b92a7' }}>Email</label>
+                <input 
+                  type="email" 
+                  placeholder="Nhập email"
+                  value={newUser.email}
+                  onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: '#0f1419',
+                    border: '1px solid #2a2f3e',
+                    borderRadius: '8px',
+                    color: 'white',
+                    fontSize: '15px'
+                  }} 
+                />
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#8b92a7' }}>Số điện thoại</label>
+                <input 
+                  type="tel" 
+                  placeholder="Nhập số điện thoại"
+                  value={newUser.phone}
+                  onChange={(e) => setNewUser({...newUser, phone: e.target.value})}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: '#0f1419',
+                    border: '1px solid #2a2f3e',
+                    borderRadius: '8px',
+                    color: 'white',
+                    fontSize: '15px'
+                  }} 
+                />
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#8b92a7' }}>Vai trò</label>
+                <select 
+                  value={newUser.role}
+                  onChange={(e) => setNewUser({...newUser, role: e.target.value})}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: '#0f1419',
+                    border: '1px solid #2a2f3e',
+                    borderRadius: '8px',
+                    color: 'white',
+                    fontSize: '15px',
+                    cursor: 'pointer'
+                  }}>
+                  <option value="">Chọn vai trò</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Quản lý">Quản lý</option>
+                  <option value="Nhân viên">Nhân viên</option>
+                </select>
+              </div>
+
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#8b92a7' }}>Mật khẩu</label>
+                <input 
+                  type="password" 
+                  placeholder="Nhập mật khẩu"
+                  value={newUser.password}
+                  onChange={(e) => setNewUser({...newUser, password: e.target.value})}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: '#0f1419',
+                    border: '1px solid #2a2f3e',
+                    borderRadius: '8px',
+                    color: 'white',
+                    fontSize: '15px'
+                  }} 
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                <button 
+                  onClick={() => {
+                    setShowAddModal(false)
+                    setNewUser({ name: '', email: '', phone: '', role: '', password: '' })
+                  }}
+                  style={{
+                    padding: '12px 24px',
+                    background: '#374151',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '15px',
+                    fontWeight: 500
+                  }}
+                >
+                  Hủy
+                </button>
+                <button 
+                  onClick={handleAddUser}
+                  style={{
+                    padding: '12px 24px',
+                    background: '#f97316',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '15px',
+                    fontWeight: 500
+                  }}
+                >
+                  Tạo Người Dùng
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Chi Tiết Người Dùng */}
+        {showDetailModal && selectedUser && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}
+          onClick={() => setShowDetailModal(false)}
+          >
+            <div style={{
+              background: '#1a1f2e',
+              padding: '32px',
+              borderRadius: '12px',
+              border: '1px solid #2a2f3e',
+              maxWidth: '500px',
+              width: '90%'
+            }}
+            onClick={(e) => e.stopPropagation()}
+            >
+              <h2 style={{ margin: '0 0 24px 0', fontSize: '20px', fontWeight: 600 }}>Chi Tiết Người Dùng</h2>
+              
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '14px', color: '#8b92a7', marginBottom: '6px' }}>Họ và tên</div>
+                <div style={{ fontSize: '18px', color: 'white', fontWeight: 600 }}>{selectedUser.name}</div>
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '14px', color: '#8b92a7', marginBottom: '6px' }}>Email</div>
+                <div style={{ fontSize: '15px', color: 'white' }}>{selectedUser.email}</div>
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '14px', color: '#8b92a7', marginBottom: '6px' }}>Số điện thoại</div>
+                <div style={{ fontSize: '15px', color: 'white' }}>{selectedUser.phone}</div>
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '14px', color: '#8b92a7', marginBottom: '6px' }}>Vai trò</div>
+                <div style={{ fontSize: '15px', color: 'white' }}>{selectedUser.role}</div>
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '14px', color: '#8b92a7', marginBottom: '6px' }}>Trạng thái</div>
+                <span style={{ 
+                  padding: '6px 14px', 
+                  borderRadius: '6px', 
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  background: selectedUser.status === 'active' ? '#10b98120' : '#ef444420',
+                  color: selectedUser.status === 'active' ? '#10b981' : '#ef4444',
+                  display: 'inline-block'
+                }}>
+                  {selectedUser.status === 'active' ? 'Hoạt động' : 'Đã khóa'}
+                </span>
+              </div>
+
+              <div style={{ marginBottom: '24px' }}>
+                <div style={{ fontSize: '14px', color: '#8b92a7', marginBottom: '6px' }}>Đăng nhập lần cuối</div>
+                <div style={{ fontSize: '15px', color: 'white' }}>{selectedUser.lastLogin}</div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                <button 
+                  onClick={() => setShowDetailModal(false)}
+                  style={{
+                    padding: '12px 24px',
+                    background: '#374151',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '15px',
+                    fontWeight: 500
+                  }}
+                >
+                  Đóng
+                </button>
+                <button 
+                  onClick={() => {
+                    handleToggleUserStatus(selectedUser.id)
+                    setShowDetailModal(false)
+                  }}
+                  style={{
+                    padding: '12px 24px',
+                    background: selectedUser.status === 'active' ? '#ef4444' : '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '15px',
+                    fontWeight: 500
+                  }}
+                >
+                  {selectedUser.status === 'active' ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
