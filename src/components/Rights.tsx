@@ -216,17 +216,19 @@ function Rights() {
                       <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>
                         {user.lastLogin}
                       </td>
-                      <td style={{ padding: '24px 28px', textAlign: 'center' }}>
-                        <span style={{ 
-                          padding: '6px 12px', 
-                          borderRadius: '6px', 
-                          fontSize: '13px',
-                          fontWeight: 600,
-                          background: user.status === 'active' ? '#10b98120' : '#6b728020',
-                          color: user.status === 'active' ? '#10b981' : '#6b7280'
-                        }}>
-                          {user.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
-                        </span>
+                      <td style={{ padding: '24px 28px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                          <span style={{ 
+                            padding: '6px 12px', 
+                            borderRadius: '6px', 
+                            fontSize: '13px',
+                            fontWeight: 600,
+                            background: user.status === 'active' ? '#10b98120' : '#6b728020',
+                            color: user.status === 'active' ? '#10b981' : '#6b7280'
+                          }}>
+                            {user.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
+                          </span>
+                        </div>
                       </td>
                       <td style={{ padding: '24px 28px', textAlign: 'center' }}>
                         <button style={{ 
