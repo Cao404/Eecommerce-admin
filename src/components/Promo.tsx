@@ -231,17 +231,19 @@ function Promo() {
                     <div style={{ color: '#8b92a7', fontSize: '14px', marginBottom: '4px' }}>Từ: {voucher.startDate}</div>
                     <div style={{ color: '#6b7280', fontSize: '13px' }}>Đến: {voucher.endDate}</div>
                   </td>
-                  <td style={{ padding: '24px 28px', textAlign: 'center' }}>
-                    <span style={{ 
-                      padding: '6px 12px', 
-                      borderRadius: '6px', 
-                      fontSize: '13px',
-                      fontWeight: 600,
-                      background: `${getStatusColor(voucher.status)}20`,
-                      color: getStatusColor(voucher.status)
-                    }}>
-                      {getStatusText(voucher.status)}
-                    </span>
+                  <td style={{ padding: '24px 28px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <span style={{ 
+                        padding: '6px 12px', 
+                        borderRadius: '6px', 
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        background: `${getStatusColor(voucher.status)}20`,
+                        color: getStatusColor(voucher.status)
+                      }}>
+                        {getStatusText(voucher.status)}
+                      </span>
+                    </div>
                   </td>
                   <td style={{ padding: '24px 28px', textAlign: 'center' }}>
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
