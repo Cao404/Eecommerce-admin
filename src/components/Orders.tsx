@@ -18,6 +18,8 @@ function Orders() {
   const [selectedItems, setSelectedItems] = useState<number[]>([])
   const [activeTab, setActiveTab] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 8
 
   const allOrders: Order[] = [
     { id: 1, orderCode: 'ORD-2024-001', customer: 'Nguyễn Văn A', products: 3, total: 2500000, status: 'delivered', paymentMethod: 'COD', date: '2024-03-15', shippingPartner: 'GHN' },
@@ -32,6 +34,13 @@ function Orders() {
     order.orderCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
     order.customer.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  const filteredOrders = activeTab === 'all' ? orders : orders.filter(o => o.status === activeTab)
+  
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentOrders = filteredOrders.slice(startIndex, endIndex)
 
   const tabs = [
     { id: 'all', label: 'Tất cả', count: orders.length },
@@ -197,7 +206,7 @@ function Orders() {
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => (
+              {currentOrders.map((order) => (
                 <tr key={order.id} style={{ borderBottom: '1px solid #2a2f3e', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = '#0f1419'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                   <td style={{ padding: '24px 28px' }}>
                     <input type="checkbox" checked={selectedItems.includes(order.id)} onChange={() => handleSelectItem(order.id)} style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
@@ -254,6 +263,72 @@ function Orders() {
               ))}
             </tbody>
           </table>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div style={{ 
+              padding: '20px 24px', 
+              borderTop: '1px solid #2a2f3e',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                style={{
+                  padding: '8px 12px',
+                  background: currentPage === 1 ? '#1a1f2e' : '#2a2f3e',
+                  color: currentPage === 1 ? '#6b7280' : 'white',
+                  border: '1px solid #2a2f3e',
+                  borderRadius: '6px',
+                  cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 500
+                }}
+              >
+                ← Trước
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  style={{
+                    padding: '8px 14px',
+                    background: currentPage === page ? '#f97316' : '#2a2f3e',
+                    color: 'white',
+                    border: '1px solid #2a2f3e',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: currentPage === page ? 600 : 500,
+                    minWidth: '40px'
+                  }}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                style={{
+                  padding: '8px 12px',
+                  background: currentPage === totalPages ? '#1a1f2e' : '#2a2f3e',
+                  color: currentPage === totalPages ? '#6b7280' : 'white',
+                  border: '1px solid #2a2f3e',
+                  borderRadius: '6px',
+                  cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 500
+                }}
+              >
+                Sau →
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
