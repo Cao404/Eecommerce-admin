@@ -26,29 +26,53 @@ function Rights() {
   const [selectedItems, setSelectedItems] = useState<number[]>([])
   const [activeTab, setActiveTab] = useState('users')
   const [searchTerm, setSearchTerm] = useState('')
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 8
 
-  const allAdminUsers: AdminUser[] = [
+  const [adminUsers, setAdminUsers] = useState<AdminUser[]>([
     { id: 1, name: 'Nguyễn Văn Admin', email: 'admin@shop.vn', role: 'admin', permissions: ['all'], lastLogin: '2024-03-25 14:30', status: 'active' },
     { id: 2, name: 'Trần Thị Quản Lý', email: 'manager@shop.vn', role: 'admin', permissions: ['products', 'orders', 'users'], lastLogin: '2024-03-25 10:15', status: 'active' },
     { id: 3, name: 'Lê Văn User', email: 'user1@shop.vn', role: 'user', permissions: ['view'], lastLogin: '2024-03-24 16:45', status: 'active' },
     { id: 4, name: 'Phạm Thị User', email: 'user2@shop.vn', role: 'user', permissions: ['view'], lastLogin: '2024-03-25 09:20', status: 'active' },
     { id: 5, name: 'Hoàng Văn Admin', email: 'admin2@shop.vn', role: 'admin', permissions: ['inventory', 'shipping'], lastLogin: '2024-03-23 11:30', status: 'inactive' },
     { id: 6, name: 'Vũ Thị User', email: 'user3@shop.vn', role: 'user', permissions: ['view'], lastLogin: '2024-03-25 13:00', status: 'active' },
-  ]
+  ])
 
-  const adminUsers = allAdminUsers.filter(user =>
+  const filteredUsers = adminUsers.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  const activityLogs: ActivityLog[] = [
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentUsers = filteredUsers.slice(startIndex, endIndex)
+
+  const selectedUser = selectedUserId ? adminUsers.find(u => u.id === selectedUserId) : null
+
+  const [activityLogs] = useState<ActivityLog[]>([
     { id: 1, user: 'Nguyễn Văn Admin', action: 'Cập nhật sản phẩm', target: 'iPhone 15 Pro', timestamp: '2024-03-25 14:30:15', ip: '192.168.1.100', status: 'success' },
     { id: 2, user: 'Trần Thị Quản Lý', action: 'Xóa đơn hàng', target: 'ORD-2024-089', timestamp: '2024-03-25 14:25:42', ip: '192.168.1.101', status: 'success' },
     { id: 3, user: 'Lê Văn Kiểm Duyệt', action: 'Duyệt nội dung', target: 'Review #1234', timestamp: '2024-03-25 14:20:33', ip: '192.168.1.102', status: 'success' },
     { id: 4, user: 'Phạm Thị Hỗ Trợ', action: 'Đăng nhập hệ thống', target: 'Dashboard', timestamp: '2024-03-25 14:15:20', ip: '192.168.1.103', status: 'failed' },
     { id: 5, user: 'Vũ Thị Báo Cáo', action: 'Xuất báo cáo', target: 'Doanh thu tháng 3', timestamp: '2024-03-25 14:10:55', ip: '192.168.1.104', status: 'success' },
     { id: 6, user: 'Nguyễn Văn Admin', action: 'Thêm người dùng', target: 'user@shop.vn', timestamp: '2024-03-25 14:05:12', ip: '192.168.1.100', status: 'success' },
-  ]
+    { id: 7, user: 'Trần Thị Quản Lý', action: 'Cập nhật danh mục', target: 'Điện thoại', timestamp: '2024-03-25 13:55:30', ip: '192.168.1.101', status: 'success' },
+    { id: 8, user: 'Nguyễn Văn Admin', action: 'Xóa sản phẩm', target: 'Samsung Galaxy S23', timestamp: '2024-03-25 13:45:18', ip: '192.168.1.100', status: 'success' },
+    { id: 9, user: 'Lê Văn Kiểm Duyệt', action: 'Từ chối đánh giá', target: 'Review #5678', timestamp: '2024-03-25 13:30:45', ip: '192.168.1.102', status: 'success' },
+    { id: 10, user: 'Phạm Thị Hỗ Trợ', action: 'Đăng nhập hệ thống', target: 'Dashboard', timestamp: '2024-03-25 13:20:12', ip: '192.168.1.103', status: 'success' },
+  ])
+
+  const [currentLogPage, setCurrentLogPage] = useState(1)
+  const currentLogs = activityLogs.slice((currentLogPage - 1) * itemsPerPage, currentLogPage * itemsPerPage)
+  const totalLogPages = Math.ceil(activityLogs.length / itemsPerPage)
+
+  const [editFormData, setEditFormData] = useState({
+    role: 'user' as 'admin' | 'user',
+    permissions: [] as string[]
+  })
 
   const getRoleText = (role: string) => {
     const texts: Record<string, string> = {
@@ -85,6 +109,44 @@ function Rights() {
       if (newSelected.length === adminUsers.length) {
         setSelectedAll(true)
       }
+    }
+  }
+
+  const handleEditClick = (userId: number) => {
+    const user = adminUsers.find(u => u.id === userId)
+    if (user) {
+      setSelectedUserId(userId)
+      setEditFormData({
+        role: user.role,
+        permissions: user.permissions
+      })
+      setShowEditModal(true)
+    }
+  }
+
+  const handleUpdateUser = () => {
+    if (selectedUserId) {
+      setAdminUsers(adminUsers.map(user => 
+        user.id === selectedUserId 
+          ? { ...user, role: editFormData.role, permissions: editFormData.permissions }
+          : user
+      ))
+      setShowEditModal(false)
+      setSelectedUserId(null)
+    }
+  }
+
+  const togglePermission = (perm: string) => {
+    if (editFormData.permissions.includes(perm)) {
+      setEditFormData({
+        ...editFormData,
+        permissions: editFormData.permissions.filter(p => p !== perm)
+      })
+    } else {
+      setEditFormData({
+        ...editFormData,
+        permissions: [...editFormData.permissions, perm]
+      })
     }
   }
 
@@ -143,7 +205,7 @@ function Rights() {
           {activeTab === 'users' && (
             <>
               <div style={{ padding: '16px 24px', borderBottom: '1px solid #2a2f3e', fontSize: '12px', color: '#6b7280' }}>
-                Hiện thị 1-{adminUsers.length} trong {adminUsers.length} kết quả
+                Hiện thị {startIndex + 1}-{Math.min(endIndex, filteredUsers.length)} trong {filteredUsers.length} kết quả
               </div>
 
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -166,7 +228,7 @@ function Rights() {
                   </tr>
                 </thead>
                 <tbody>
-                  {adminUsers.map((user) => (
+                  {currentUsers.map((user) => (
                     <tr key={user.id} style={{ borderBottom: '1px solid #2a2f3e', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = '#0f1419'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                       <td style={{ padding: '24px 28px' }}>
                         <input type="checkbox" checked={selectedItems.includes(user.id)} onChange={() => handleSelectItem(user.id)} style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
@@ -231,16 +293,22 @@ function Rights() {
                         </div>
                       </td>
                       <td style={{ padding: '24px 28px', textAlign: 'center' }}>
-                        <button style={{ 
-                          padding: '8px 16px', 
-                          background: '#3b82f6', 
-                          color: 'white', 
-                          border: 'none', 
-                          borderRadius: '6px', 
-                          cursor: 'pointer',
-                          fontSize: '13px',
-                          fontWeight: 500
-                        }}>
+                        <button 
+                          onClick={() => handleEditClick(user.id)}
+                          style={{ 
+                            padding: '8px 16px', 
+                            background: '#3b82f6', 
+                            color: 'white', 
+                            border: 'none', 
+                            borderRadius: '6px', 
+                            cursor: 'pointer',
+                            fontSize: '13px',
+                            fontWeight: 500,
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = '#2563eb'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = '#3b82f6'}
+                        >
                           Chỉnh sửa
                         </button>
                       </td>
@@ -248,13 +316,75 @@ function Rights() {
                   ))}
                 </tbody>
               </table>
+
+              {totalPages > 1 && (
+                <div style={{ 
+                  padding: '24px', 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  alignItems: 'center', 
+                  gap: '8px',
+                  borderTop: '1px solid #2a2f3e'
+                }}>
+                  <button
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    style={{
+                      padding: '8px 16px',
+                      background: currentPage === 1 ? '#1a1f2e' : '#2a2f3e',
+                      color: currentPage === 1 ? '#6b7280' : 'white',
+                      border: '1px solid #2a2f3e',
+                      borderRadius: '6px',
+                      cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    ← Trước
+                  </button>
+                  
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      style={{
+                        padding: '8px 12px',
+                        background: currentPage === page ? '#f97316' : '#2a2f3e',
+                        color: 'white',
+                        border: '1px solid #2a2f3e',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        minWidth: '40px'
+                      }}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  
+                  <button
+                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                    style={{
+                      padding: '8px 16px',
+                      background: currentPage === totalPages ? '#1a1f2e' : '#2a2f3e',
+                      color: currentPage === totalPages ? '#6b7280' : 'white',
+                      border: '1px solid #2a2f3e',
+                      borderRadius: '6px',
+                      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    Sau →
+                  </button>
+                </div>
+              )}
             </>
           )}
 
           {activeTab === 'logs' && (
             <>
               <div style={{ padding: '16px 24px', borderBottom: '1px solid #2a2f3e', fontSize: '12px', color: '#6b7280' }}>
-                Hiện thị 1-{activityLogs.length} trong {activityLogs.length} kết quả
+                Hiện thị {(currentLogPage - 1) * itemsPerPage + 1}-{Math.min(currentLogPage * itemsPerPage, activityLogs.length)} trong {activityLogs.length} kết quả
               </div>
 
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -269,7 +399,7 @@ function Rights() {
                   </tr>
                 </thead>
                 <tbody>
-                  {activityLogs.map((log) => (
+                  {currentLogs.map((log) => (
                     <tr key={log.id} style={{ borderBottom: '1px solid #2a2f3e', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = '#0f1419'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                       <td style={{ padding: '24px 28px', color: 'white', fontSize: '15px' }}>
                         {log.user}
@@ -302,10 +432,225 @@ function Rights() {
                   ))}
                 </tbody>
               </table>
+
+              {totalLogPages > 1 && (
+                <div style={{ 
+                  padding: '24px', 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  alignItems: 'center', 
+                  gap: '8px',
+                  borderTop: '1px solid #2a2f3e'
+                }}>
+                  <button
+                    onClick={() => setCurrentLogPage(Math.max(1, currentLogPage - 1))}
+                    disabled={currentLogPage === 1}
+                    style={{
+                      padding: '8px 16px',
+                      background: currentLogPage === 1 ? '#1a1f2e' : '#2a2f3e',
+                      color: currentLogPage === 1 ? '#6b7280' : 'white',
+                      border: '1px solid #2a2f3e',
+                      borderRadius: '6px',
+                      cursor: currentLogPage === 1 ? 'not-allowed' : 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    ← Trước
+                  </button>
+                  
+                  {Array.from({ length: totalLogPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentLogPage(page)}
+                      style={{
+                        padding: '8px 12px',
+                        background: currentLogPage === page ? '#f97316' : '#2a2f3e',
+                        color: 'white',
+                        border: '1px solid #2a2f3e',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        minWidth: '40px'
+                      }}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  
+                  <button
+                    onClick={() => setCurrentLogPage(Math.min(totalLogPages, currentLogPage + 1))}
+                    disabled={currentLogPage === totalLogPages}
+                    style={{
+                      padding: '8px 16px',
+                      background: currentLogPage === totalLogPages ? '#1a1f2e' : '#2a2f3e',
+                      color: currentLogPage === totalLogPages ? '#6b7280' : 'white',
+                      border: '1px solid #2a2f3e',
+                      borderRadius: '6px',
+                      cursor: currentLogPage === totalLogPages ? 'not-allowed' : 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    Sau →
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>
       </div>
+
+      {showEditModal && selectedUser && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: '#1a1f2e',
+            borderRadius: '12px',
+            width: '90%',
+            maxWidth: '600px',
+            maxHeight: '90vh',
+            overflow: 'auto',
+            border: '1px solid #2a2f3e'
+          }}>
+            <div style={{
+              padding: '24px',
+              borderBottom: '1px solid #2a2f3e',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <h2 style={{ margin: 0, fontSize: '20px', color: 'white' }}>Chỉnh Sửa Người Dùng</h2>
+              <button
+                onClick={() => setShowEditModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#6b7280',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  padding: '0',
+                  width: '32px',
+                  height: '32px'
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{ padding: '24px' }}>
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ color: 'white', fontSize: '16px', fontWeight: 500, marginBottom: '8px' }}>
+                  {selectedUser.name}
+                </div>
+                <div style={{ color: '#6b7280', fontSize: '14px' }}>
+                  {selectedUser.email}
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', color: '#8b92a7', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Vai Trò
+                </label>
+                <select
+                  value={editFormData.role}
+                  onChange={(e) => setEditFormData({ ...editFormData, role: e.target.value as 'admin' | 'user' })}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: '#0f1419',
+                    border: '1px solid #2a2f3e',
+                    borderRadius: '6px',
+                    color: 'white',
+                    fontSize: '15px'
+                  }}
+                >
+                  <option value="user">Người Dùng</option>
+                  <option value="admin">Quản Trị Viên</option>
+                </select>
+              </div>
+
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', marginBottom: '12px', color: '#8b92a7', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Quyền Hạn
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+                  {['all', 'products', 'orders', 'users', 'inventory', 'shipping', 'view'].map(perm => (
+                    <label key={perm} style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px',
+                      padding: '12px',
+                      background: editFormData.permissions.includes(perm) ? '#3b82f620' : '#0f1419',
+                      border: `1px solid ${editFormData.permissions.includes(perm) ? '#3b82f6' : '#2a2f3e'}`,
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}>
+                      <input
+                        type="checkbox"
+                        checked={editFormData.permissions.includes(perm)}
+                        onChange={() => togglePermission(perm)}
+                        style={{ cursor: 'pointer', width: '18px', height: '18px' }}
+                      />
+                      <span style={{ color: editFormData.permissions.includes(perm) ? '#3b82f6' : '#8b92a7', fontSize: '14px' }}>
+                        {perm}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  style={{
+                    padding: '12px 24px',
+                    background: '#2a2f3e',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '15px',
+                    fontWeight: 500,
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = '#374151'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = '#2a2f3e'}
+                >
+                  Hủy
+                </button>
+                <button
+                  onClick={handleUpdateUser}
+                  style={{
+                    padding: '12px 24px',
+                    background: '#3b82f6',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '15px',
+                    fontWeight: 500,
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = '#2563eb'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = '#3b82f6'}
+                >
+                  Lưu Thay Đổi
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
