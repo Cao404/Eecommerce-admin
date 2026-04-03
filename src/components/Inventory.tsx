@@ -18,6 +18,8 @@ function Inventory() {
   const [selectedAll, setSelectedAll] = useState(false)
   const [selectedItems, setSelectedItems] = useState<number[]>([])
   const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 8
 
   const allItems: InventoryItem[] = [
     { id: 1, productName: 'iPhone 15 Pro', sku: 'SKU-0001', warehouse: 'Kho Hà Nội', stock: 45, reserved: 8, available: 37, minStock: 10, status: 'in_stock', lastUpdated: '2024-03-25' },
@@ -33,6 +35,11 @@ function Inventory() {
     item.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.warehouse.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  const totalPages = Math.ceil(items.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentItems = items.slice(startIndex, endIndex)
 
   const stats = [
     { label: 'Tổng Sản Phẩm', value: items.length.toString(), icon: '📦', color: '#3b82f6' },
@@ -189,7 +196,7 @@ function Inventory() {
               </tr>
             </thead>
             <tbody>
-              {items.map((item) => (
+              {currentItems.map((item) => (
                 <tr key={item.id} style={{ borderBottom: '1px solid #2a2f3e', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = '#0f1419'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                   <td style={{ padding: '24px 28px' }}>
                     <input type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => handleSelectItem(item.id)} style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
@@ -245,6 +252,72 @@ function Inventory() {
               ))}
             </tbody>
           </table>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div style={{ 
+              padding: '20px 24px', 
+              borderTop: '1px solid #2a2f3e',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                style={{
+                  padding: '8px 12px',
+                  background: currentPage === 1 ? '#1a1f2e' : '#2a2f3e',
+                  color: currentPage === 1 ? '#6b7280' : 'white',
+                  border: '1px solid #2a2f3e',
+                  borderRadius: '6px',
+                  cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 500
+                }}
+              >
+                ← Trước
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  style={{
+                    padding: '8px 14px',
+                    background: currentPage === page ? '#f97316' : '#2a2f3e',
+                    color: 'white',
+                    border: '1px solid #2a2f3e',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: currentPage === page ? 600 : 500,
+                    minWidth: '40px'
+                  }}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                style={{
+                  padding: '8px 12px',
+                  background: currentPage === totalPages ? '#1a1f2e' : '#2a2f3e',
+                  color: currentPage === totalPages ? '#6b7280' : 'white',
+                  border: '1px solid #2a2f3e',
+                  borderRadius: '6px',
+                  cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 500
+                }}
+              >
+                Sau →
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
