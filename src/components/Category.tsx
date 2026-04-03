@@ -26,6 +26,8 @@ function Category() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
   const [selectedItems, setSelectedItems] = useState<number[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 8
 
   const [newCategory, setNewCategory] = useState({
     name: '',
@@ -51,6 +53,11 @@ function Category() {
     const matchesStatus = statusFilter === 'all' || cat.status === statusFilter
     return matchesSearch && matchesStatus
   })
+
+  const totalPages = Math.ceil(filteredCategories.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentCategories = filteredCategories.slice(startIndex, endIndex)
 
   const handleSelectAll = (checked: boolean) => {
     setSelectedAll(checked)
@@ -308,7 +315,7 @@ function Category() {
           </div>
           
           <div style={{ padding: '16px 24px', borderBottom: '1px solid #2a2f3e', fontSize: '12px', color: '#6b7280' }}>
-            Hiện thị 1-{filteredCategories.length} trong {filteredCategories.length} kết quả
+            Hiện thị {startIndex + 1}-{Math.min(endIndex, filteredCategories.length)} trong {filteredCategories.length} kết quả
           </div>
 
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -332,12 +339,12 @@ function Category() {
               </tr>
             </thead>
             <tbody>
-              {filteredCategories.map((category, index) => (
+              {currentCategories.map((category, index) => (
                 <tr key={category.id} style={{ borderBottom: '1px solid #2a2f3e', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = '#0f1419'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
                   <td style={{ padding: '24px 28px' }}>
                     <input type="checkbox" checked={selectedItems.includes(category.id)} onChange={() => handleSelectItem(category.id)} style={{ cursor: 'pointer', width: '20px', height: '20px' }} />
                   </td>
-                  <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>{index + 1}</td>
+                  <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>{startIndex + index + 1}</td>
                   <td style={{ padding: '24px 28px', color: 'white', fontSize: '16px', fontWeight: 500 }}>{category.name}</td>
                   <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>{category.description}</td>
                   <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px', textAlign: 'center' }}>{category.productCount}</td>
@@ -406,6 +413,72 @@ function Category() {
               ))}
             </tbody>
           </table>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div style={{ 
+              padding: '20px 24px', 
+              borderTop: '1px solid #2a2f3e',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                style={{
+                  padding: '8px 12px',
+                  background: currentPage === 1 ? '#1a1f2e' : '#2a2f3e',
+                  color: currentPage === 1 ? '#6b7280' : 'white',
+                  border: '1px solid #2a2f3e',
+                  borderRadius: '6px',
+                  cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 500
+                }}
+              >
+                ← Trước
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  style={{
+                    padding: '8px 14px',
+                    background: currentPage === page ? '#f97316' : '#2a2f3e',
+                    color: 'white',
+                    border: '1px solid #2a2f3e',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: currentPage === page ? 600 : 500,
+                    minWidth: '40px'
+                  }}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                style={{
+                  padding: '8px 12px',
+                  background: currentPage === totalPages ? '#1a1f2e' : '#2a2f3e',
+                  color: currentPage === totalPages ? '#6b7280' : 'white',
+                  border: '1px solid #2a2f3e',
+                  borderRadius: '6px',
+                  cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 500
+                }}
+              >
+                Sau →
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Modal Thêm Danh Mục */}
