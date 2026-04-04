@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useStore } from './store/useStore'
 import Dashboard from './components/Dashboard'
 import Products from './components/Products'
@@ -13,9 +14,13 @@ import Inventory from './components/Inventory'
 import Shipping from './components/Shipping'
 import Login from './components/Login'
 import Shop from './components/Shop'
+import OrderApproval from './components/OrderApproval'
 
 function App() {
-  const { currentPage, setCurrentPage, currentUser, setCurrentUser } = useStore()
+  const { currentPage, setCurrentPage, currentUser, setCurrentUser, pendingOrders } = useStore()
+  const [showOrderList, setShowOrderList] = useState(false)
+
+  const pendingCount = pendingOrders.filter(o => o.status === 'pending').length
 
   // Nếu chưa đăng nhập, hiển thị trang Login
   if (!currentUser) {
@@ -48,7 +53,9 @@ function App() {
   ]
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'system-ui, -apple-system, sans-serif', background: '#0f1419' }}>
+    <>
+      {currentUser?.role === 'admin' && <OrderApproval showList={showOrderList} onClose={() => setShowOrderList(false)} />}
+      <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'system-ui, -apple-system, sans-serif', background: '#0f1419' }}>
       <nav style={{ width: '280px', background: '#1c2536', color: '#8b92a7', padding: '0', borderRight: '1px solid #2d3748', position: 'fixed', height: '100vh', display: 'flex', flexDirection: 'column' }}>
         <div style={{ padding: '24px', borderBottom: '1px solid #2d3748' }}>
           <h2 style={{ margin: 0, color: 'white', fontSize: '20px', fontWeight: 700 }}>📦 shop.vn</h2>
@@ -61,8 +68,12 @@ function App() {
           scrollbarWidth: 'none',
           msOverflowStyle: 'none'
         }}
-        className="sidebar-scroll"
         >
+          <style>{`
+            .sidebar-scroll::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
           {menuItems.map((item, idx) => 
             'section' in item ? (
               <div key={idx} style={{ padding: '18px 24px 10px', fontSize: '11px', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '1px', marginTop: idx > 0 ? '16px' : '0' }}>
@@ -110,19 +121,41 @@ function App() {
           <div style={{ 
             margin: '24px 20px', 
             padding: '20px', 
-            background: '#2d3748', 
+            background: pendingCount > 0 ? '#f97316' : '#2d3748', 
             borderRadius: '12px',
             display: 'flex',
             alignItems: 'center',
             gap: '14px',
             cursor: 'pointer',
-            transition: 'background 0.2s'
+            transition: 'background 0.2s',
+            position: 'relative'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.background = '#374151'}
-          onMouseLeave={(e) => e.currentTarget.style.background = '#2d3748'}
+          onClick={() => pendingCount > 0 && setShowOrderList(true)}
+          onMouseEnter={(e) => e.currentTarget.style.background = pendingCount > 0 ? '#ea580c' : '#374151'}
+          onMouseLeave={(e) => e.currentTarget.style.background = pendingCount > 0 ? '#f97316' : '#2d3748'}
           >
             <span style={{ fontSize: '24px' }}>🛒</span>
             <span style={{ color: '#e5e7eb', fontSize: '15px', fontWeight: 500 }}>Đã nhận được đơn đặt hàng</span>
+            {pendingCount > 0 && (
+              <div style={{
+                position: 'absolute',
+                top: '-8px',
+                right: '-8px',
+                background: 'white',
+                color: '#f97316',
+                width: '28px',
+                height: '28px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '14px',
+                fontWeight: 700,
+                border: '2px solid #1c2536'
+              }}>
+                {pendingCount}
+              </div>
+            )}
           </div>
         </div>
         
@@ -187,6 +220,7 @@ function App() {
         {currentPage === 'customers' && <Customers />}
       </main>
     </div>
+    </>
   )
 }
 
