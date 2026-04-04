@@ -26,19 +26,18 @@ function Warranty() {
   const itemsPerPage = 8
 
   const [disputes, setDisputes] = useState<Dispute[]>([
-    { id: 1, disputeCode: 'DIS-001', orderCode: 'ORD-2024-001', customer: 'Nguyễn Văn A', shop: 'Shop Tech Pro', type: 'refund', reason: 'Sản phẩm không đúng mô tả', amount: 2500000, status: 'pending', priority: 'high', createdDate: '2024-03-25' },
-    { id: 2, disputeCode: 'DIS-002', orderCode: 'ORD-2024-015', customer: 'Trần Thị B', shop: 'Shop Mobile', type: 'return', reason: 'Sản phẩm bị lỗi', amount: 3000000, status: 'investigating', priority: 'high', createdDate: '2024-03-24' },
-    { id: 3, disputeCode: 'DIS-003', orderCode: 'ORD-2024-032', customer: 'Lê Văn C', shop: 'Shop Audio', type: 'warranty', reason: 'Yêu cầu bảo hành', amount: 1500000, status: 'resolved', priority: 'medium', createdDate: '2024-03-23' },
-    { id: 4, disputeCode: 'DIS-004', orderCode: 'ORD-2024-048', customer: 'Phạm Thị D', shop: 'Shop Laptop', type: 'complaint', reason: 'Giao hàng chậm', amount: 4500000, status: 'investigating', priority: 'medium', createdDate: '2024-03-22' },
-    { id: 5, disputeCode: 'DIS-005', orderCode: 'ORD-2024-056', customer: 'Hoàng Văn E', shop: 'Shop Accessories', type: 'refund', reason: 'Nhận sai sản phẩm', amount: 800000, status: 'resolved', priority: 'low', createdDate: '2024-03-21' },
-    { id: 6, disputeCode: 'DIS-006', orderCode: 'ORD-2024-067', customer: 'Vũ Thị F', shop: 'Shop Gaming', type: 'return', reason: 'Đổi ý không mua', amount: 5200000, status: 'rejected', priority: 'low', createdDate: '2024-03-20' },
+    { id: 1, disputeCode: 'DIS-001', orderCode: 'ORD-2024-001', customer: 'Nguyễn Văn A', shop: 'Shop.vn', type: 'refund', reason: 'Sản phẩm không đúng mô tả', amount: 2500000, status: 'pending', priority: 'high', createdDate: '2024-03-25' },
+    { id: 2, disputeCode: 'DIS-002', orderCode: 'ORD-2024-015', customer: 'Trần Thị B', shop: 'Shop.vn', type: 'return', reason: 'Sản phẩm bị lỗi', amount: 3000000, status: 'investigating', priority: 'high', createdDate: '2024-03-24' },
+    { id: 3, disputeCode: 'DIS-003', orderCode: 'ORD-2024-032', customer: 'Lê Văn C', shop: 'Shop.vn', type: 'warranty', reason: 'Yêu cầu bảo hành', amount: 1500000, status: 'resolved', priority: 'medium', createdDate: '2024-03-23' },
+    { id: 4, disputeCode: 'DIS-004', orderCode: 'ORD-2024-048', customer: 'Phạm Thị D', shop: 'Shop.vn', type: 'complaint', reason: 'Giao hàng chậm', amount: 4500000, status: 'investigating', priority: 'medium', createdDate: '2024-03-22' },
+    { id: 5, disputeCode: 'DIS-005', orderCode: 'ORD-2024-056', customer: 'Hoàng Văn E', shop: 'Shop.vn', type: 'refund', reason: 'Nhận sai sản phẩm', amount: 800000, status: 'resolved', priority: 'low', createdDate: '2024-03-21' },
+    { id: 6, disputeCode: 'DIS-006', orderCode: 'ORD-2024-067', customer: 'Vũ Thị F', shop: 'Shop.vn', type: 'return', reason: 'Đổi ý không mua', amount: 5200000, status: 'rejected', priority: 'low', createdDate: '2024-03-20' },
   ])
 
   const filteredDisputes = disputes.filter(dispute => {
     const matchesSearch = dispute.disputeCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dispute.orderCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      dispute.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      dispute.shop.toLowerCase().includes(searchTerm.toLowerCase())
+      dispute.customer.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesTab = activeTab === 'all' || dispute.status === activeTab
     return matchesSearch && matchesTab
   })
@@ -201,7 +200,6 @@ function Warranty() {
                 <th style={{ padding: '20px 28px', textAlign: 'left', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>MÃ TRANH CHẤP</th>
                 <th style={{ padding: '20px 28px', textAlign: 'left', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>LOẠI</th>
                 <th style={{ padding: '20px 28px', textAlign: 'left', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>KHÁCH HÀNG</th>
-                <th style={{ padding: '20px 28px', textAlign: 'left', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>CỬA HÀNG</th>
                 <th style={{ padding: '20px 28px', textAlign: 'left', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>SỐ TIỀN</th>
                 <th style={{ padding: '20px 28px', textAlign: 'center', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>ƯU TIÊN</th>
                 <th style={{ padding: '20px 28px', textAlign: 'center', color: '#8b92a7', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>TRẠNG THÁI</th>
@@ -232,9 +230,6 @@ function Warranty() {
                   </td>
                   <td style={{ padding: '24px 28px', color: 'white', fontSize: '15px' }}>
                     {dispute.customer}
-                  </td>
-                  <td style={{ padding: '24px 28px', color: '#8b92a7', fontSize: '15px' }}>
-                    {dispute.shop}
                   </td>
                   <td style={{ padding: '24px 28px', color: 'white', fontSize: '16px', fontWeight: 600 }}>
                     {dispute.amount.toLocaleString('vi-VN')}₫
@@ -406,11 +401,6 @@ function Warranty() {
               <div style={{ marginBottom: '16px' }}>
                 <div style={{ fontSize: '14px', color: '#8b92a7', marginBottom: '6px' }}>Khách hàng</div>
                 <div style={{ fontSize: '16px', color: 'white', fontWeight: 500 }}>{selectedDispute.customer}</div>
-              </div>
-
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '14px', color: '#8b92a7', marginBottom: '6px' }}>Cửa hàng</div>
-                <div style={{ fontSize: '16px', color: 'white', fontWeight: 500 }}>{selectedDispute.shop}</div>
               </div>
 
               <div style={{ marginBottom: '16px' }}>
