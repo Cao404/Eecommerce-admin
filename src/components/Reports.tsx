@@ -19,12 +19,12 @@ function Reports() {
     { name: 'iPad Pro', sales: 56, revenue: 1568000000 },
   ]
 
-  const topSellers = [
-    { name: 'Shop Tech Pro', orders: 234, revenue: 5850000000, rating: 4.8 },
-    { name: 'Shop Mobile', orders: 189, revenue: 4725000000, rating: 4.7 },
-    { name: 'Shop Laptop', orders: 156, revenue: 7020000000, rating: 4.9 },
-    { name: 'Shop Audio', orders: 145, revenue: 2175000000, rating: 4.6 },
-    { name: 'Shop Gaming', orders: 123, revenue: 6150000000, rating: 4.8 },
+  const topCategories = [
+    { name: 'Điện thoại', orders: 234, revenue: 5850000000, percentage: 35 },
+    { name: 'Laptop', orders: 189, revenue: 4725000000, percentage: 28 },
+    { name: 'Phụ kiện', orders: 156, revenue: 7020000000, percentage: 22 },
+    { name: 'Tablet', orders: 145, revenue: 2175000000, percentage: 10 },
+    { name: 'Tai nghe', orders: 123, revenue: 6150000000, percentage: 5 },
   ]
 
   return (
@@ -103,9 +103,9 @@ function Reports() {
           </div>
 
           <div style={{ background: '#1a1f2e', padding: '28px', borderRadius: '12px', border: '1px solid #2a2f3e' }}>
-            <h2 style={{ margin: '0 0 24px 0', fontSize: '18px', fontWeight: 600 }}>Người Bán Hàng Đầu</h2>
+            <h2 style={{ margin: '0 0 24px 0', fontSize: '18px', fontWeight: 600 }}>Danh Mục Bán Chạy</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {topSellers.map((seller, idx) => (
+              {topCategories.map((category, idx) => (
                 <div key={idx} style={{ 
                   padding: '16px', 
                   background: '#0f1419', 
@@ -114,15 +114,15 @@ function Reports() {
                   justifyContent: 'space-between',
                   alignItems: 'center'
                 }}>
-                  <div>
-                    <div style={{ color: 'white', fontSize: '15px', fontWeight: 500, marginBottom: '6px' }}>{seller.name}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: 'white', fontSize: '15px', fontWeight: 500, marginBottom: '6px' }}>{category.name}</div>
                     <div style={{ color: '#6b7280', fontSize: '13px' }}>
-                      {seller.orders} đơn • ⭐ {seller.rating}
+                      {category.orders} đơn • {category.percentage}%
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <div style={{ color: '#3b82f6', fontSize: '16px', fontWeight: 600 }}>
-                      {(seller.revenue / 1000000).toFixed(1)}M₫
+                      {(category.revenue / 1000000).toFixed(1)}M₫
                     </div>
                   </div>
                 </div>
