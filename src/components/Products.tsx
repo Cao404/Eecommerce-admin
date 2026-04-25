@@ -3,6 +3,7 @@ import { api } from '../api'
 import { useStore } from '../store/useStore'
 import { DEFAULT_PRODUCTS } from '../defaultProducts'
 import Header from './Header'
+import '../styles/san-pham.css'
 
 type ProductForm = {
   name: string
@@ -175,7 +176,7 @@ function Products() {
   }
 
   return (
-    <div style={{ color: 'white', minHeight: '100vh' }}>
+    <div className="product-page" style={{ color: 'white', minHeight: '100vh' }}>
       <Header
         title="DANH SÁCH SẢN PHẨM"
         searchValue={searchTerm}
@@ -183,8 +184,8 @@ function Products() {
         searchPlaceholder="Tìm kiếm sản phẩm..."
       />
 
-      <div style={{ padding: '40px' }}>
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '20px' }}>
+      <div className="product-page__content" style={{ padding: '40px' }}>
+        <div className="product-page__filters" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '20px' }}>
           {categories.map((category) => (
             <button
               key={category}
@@ -219,14 +220,14 @@ function Products() {
           </button>
         </div>
 
-        <div style={{ background: '#1a1f2e', border: '1px solid #2a2f3e', borderRadius: '12px', overflow: 'hidden' }}>
-          <div style={{ padding: '16px 20px', borderBottom: '1px solid #2a2f3e', color: '#8b92a7', fontSize: '13px' }}>
+        <div className="product-page__card" style={{ background: '#1a1f2e', border: '1px solid #2a2f3e', borderRadius: '12px', overflow: 'hidden' }}>
+          <div className="product-page__section-title" style={{ padding: '16px 20px', borderBottom: '1px solid #2a2f3e', color: '#8b92a7', fontSize: '13px' }}>
             Hiển thị {filteredProducts.length} sản phẩm
           </div>
 
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table className="product-page__table" style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: '#0f1419', borderBottom: '1px solid #2a2f3e' }}>
+              <tr className="product-page__table-head" style={{ background: '#0f1419', borderBottom: '1px solid #2a2f3e' }}>
                 <th style={thStyle}>Sản phẩm</th>
                 <th style={thStyle}>SKU</th>
                 <th style={thStyle}>Ảnh</th>
@@ -239,30 +240,31 @@ function Products() {
             </thead>
             <tbody>
               {filteredProducts.map((product) => (
-                <tr key={product.id} style={{ borderBottom: '1px solid #2a2f3e' }}>
-                  <td style={tdStyle}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <img src={product.image} alt={product.name} style={{ width: '56px', height: '56px', borderRadius: '10px', objectFit: 'cover' }} />
-                      <div>
-                        <div style={{ fontWeight: 700, color: 'white' }}>{product.name}</div>
-                        <div style={{ color: '#8b92a7', fontSize: '13px' }}>{product.description || 'Không có mô tả'}</div>
+                <tr key={product.id} className="product-page__table-row" style={{ borderBottom: '1px solid #2a2f3e' }}>
+                    <td style={tdStyle}>
+                      <div className="product-page__product-cell" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <img src={product.image} alt={product.name} className="product-page__thumb" style={{ width: '56px', height: '56px', borderRadius: '10px', objectFit: 'cover' }} />
+                        <div>
+                          <div style={{ fontWeight: 700, color: 'white' }}>{product.name}</div>
+                          <div style={{ color: '#8b92a7', fontSize: '13px' }}>{product.description || 'Không có mô tả'}</div>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td style={tdStyle}>{product.sku}</td>
-                  <td style={tdStyle}>
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      style={{ width: '48px', height: '48px', borderRadius: '10px', objectFit: 'cover', border: '1px solid #2a2f3e' }}
-                    />
-                  </td>
+                    </td>
+                    <td style={tdStyle}>{product.sku}</td>
+                    <td style={tdStyle}>
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="product-page__thumb--small"
+                        style={{ width: '48px', height: '48px', borderRadius: '10px', objectFit: 'cover', border: '1px solid #2a2f3e' }}
+                      />
+                    </td>
                   <td style={tdStyle}>{product.category}</td>
                   <td style={tdStyle}>{money(product.price)}</td>
                   <td style={tdStyle}>{product.stock}</td>
                   <td style={tdStyle}>{product.sold}</td>
-                  <td style={{ ...tdStyle, textAlign: 'center' }}>
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                    <td style={{ ...tdStyle, textAlign: 'center' }}>
+                      <div className="product-page__actions" style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
                       <button onClick={() => setSelectedProductId(product.id)} style={actionButton('#3b82f6')}>Chi tiết</button>
                       <button onClick={() => openEditModal(product)} style={actionButton('#10b981')}>Sửa</button>
                       <button onClick={() => handleDelete(product.id)} style={actionButton('#ef4444')}>Xóa</button>

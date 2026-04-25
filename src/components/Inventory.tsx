@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Header from './Header'
 import { api } from '../api'
 import { useStore } from '../store/useStore'
+import '../styles/kho-hang.css'
 
 interface InventoryItem {
   id: number
@@ -179,7 +180,7 @@ function Inventory() {
   }
 
   return (
-    <div style={{ color: 'white', minHeight: '100vh' }}>
+    <div className="inventory-page" style={{ color: 'white', minHeight: '100vh' }}>
       <Header
         title="QUẢN LÝ KHO HÀNG"
         searchValue={searchTerm}
@@ -187,11 +188,12 @@ function Inventory() {
         searchPlaceholder="Tìm kiếm sản phẩm, SKU, danh mục..."
       />
 
-      <div style={{ padding: '40px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '30px' }}>
+      <div className="inventory-page__content" style={{ padding: '40px' }}>
+        <div className="inventory-page__stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '30px' }}>
           {stats.map((stat, idx) => (
             <div
               key={idx}
+              className="inventory-page__stat"
               style={{
                 background: '#1a1f2e',
                 padding: '28px',
@@ -203,6 +205,7 @@ function Inventory() {
               }}
             >
               <div
+                className="inventory-page__stat-icon"
                 style={{
                   width: '64px',
                   height: '64px',
@@ -224,8 +227,9 @@ function Inventory() {
           ))}
         </div>
 
-        <div style={{ background: '#1a1f2e', borderRadius: '8px', border: '1px solid #2a2f3e', overflow: 'hidden' }}>
+        <div className="inventory-page__panel" style={{ background: '#1a1f2e', borderRadius: '8px', border: '1px solid #2a2f3e', overflow: 'hidden' }}>
           <div
+            className="inventory-page__panel-head"
             style={{
               padding: '20px 24px',
               borderBottom: '1px solid #2a2f3e',
@@ -236,11 +240,12 @@ function Inventory() {
               flexWrap: 'wrap',
             }}
           >
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div className="inventory-page__panel-title" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
               <div style={{ fontSize: '16px', color: 'white', fontWeight: 500 }}>Danh sách tồn kho</div>
               {selectedItems.length > 0 && (
                 <button
                   onClick={handleExportExcel}
+                  className="inventory-page__btn-success"
                   style={{
                     padding: '8px 16px',
                     background: '#10b981',
@@ -257,7 +262,7 @@ function Inventory() {
               )}
             </div>
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} style={filterStyle}>
+              <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="inventory-page__btn-filter" style={filterStyle}>
                 <option value="all">Tất cả danh mục</option>
                 {categories.slice(1).map((category) => (
                   <option key={category} value={category}>
@@ -268,6 +273,7 @@ function Inventory() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as 'all' | 'in_stock' | 'low_stock' | 'out_of_stock')}
+                className="inventory-page__btn-filter"
                 style={filterStyle}
               >
                 <option value="all">Tất cả trạng thái</option>
@@ -278,13 +284,13 @@ function Inventory() {
             </div>
           </div>
 
-          <div style={{ padding: '16px 24px', borderBottom: '1px solid #2a2f3e', fontSize: '12px', color: '#6b7280' }}>
+          <div className="inventory-page__summary" style={{ padding: '16px 24px', borderBottom: '1px solid #2a2f3e', fontSize: '12px', color: '#6b7280' }}>
             Hiển thị {filteredItems.length === 0 ? 0 : startIndex + 1}-{Math.min(endIndex, filteredItems.length)} trong {filteredItems.length} kết quả
           </div>
 
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table className="inventory-page__table" style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: '#0f1419', borderBottom: '1px solid #2a2f3e' }}>
+              <tr className="inventory-page__table-head" style={{ background: '#0f1419', borderBottom: '1px solid #2a2f3e' }}>
                 <th style={{ padding: '20px 28px', textAlign: 'left', width: '50px' }}>
                   <input
                     type="checkbox"
@@ -306,13 +312,13 @@ function Inventory() {
             <tbody>
               {currentItems.length === 0 ? (
                 <tr>
-                  <td colSpan={9} style={{ padding: '48px', textAlign: 'center', color: '#8b92a7' }}>
+                  <td colSpan={9} className="inventory-page__empty" style={{ padding: '48px', textAlign: 'center', color: '#8b92a7' }}>
                     Không có sản phẩm phù hợp
                   </td>
                 </tr>
               ) : (
                 currentItems.map((item) => (
-                  <tr key={item.id} style={{ borderBottom: '1px solid #2a2f3e' }}>
+                  <tr key={item.id} className="inventory-page__table-row" style={{ borderBottom: '1px solid #2a2f3e' }}>
                     <td style={{ padding: '20px 28px' }}>
                       <input
                         type="checkbox"
