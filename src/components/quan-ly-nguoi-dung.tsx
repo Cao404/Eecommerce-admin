@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type CSSProperties, type Dispatch, type R
 import { api, type ApiUser } from '../api'
 import { useStore } from '../store/useStore'
 import Header from './Header'
+import '../styles/quan-ly-nguoi-dung.css'
 
 type UserForm = {
   name: string
@@ -110,7 +111,7 @@ function UserManagement() {
   ]
 
   return (
-    <div style={{ color: 'white', minHeight: '100vh' }}>
+    <div className="ql-nguoi-dung-page">
       <Header
         title="QUẢN LÝ NGƯỜI DÙNG"
         searchValue={searchTerm}
@@ -118,8 +119,8 @@ function UserManagement() {
         searchPlaceholder="Tìm kiếm người dùng..."
       />
 
-      <div style={{ padding: '40px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '30px' }}>
+      <div className="ql-nguoi-dung-page__content">
+        <div className="ql-nguoi-dung-page__stats">
           {stats.map((stat) => (
             <div key={stat.label} style={{ background: '#1a1f2e', padding: '24px', borderRadius: '12px', border: '1px solid #2a2f3e' }}>
               <div style={{ fontSize: '36px', fontWeight: 700, color: 'white', marginBottom: '8px' }}>{stat.value}</div>
@@ -129,14 +130,14 @@ function UserManagement() {
           ))}
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', marginBottom: '20px' }}>
+        <div className="ql-nguoi-dung-page__toolbar">
           <div style={{ color: '#8b92a7' }}>{loading ? 'Đang tải...' : `Hiển thị ${filteredUsers.length} người dùng`}</div>
         </div>
 
-        <div style={{ background: '#1a1f2e', borderRadius: '12px', border: '1px solid #2a2f3e', overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="ql-nguoi-dung-page__table-card">
+          <table className="ql-nguoi-dung-page__table">
             <thead>
-              <tr style={{ background: '#0f1419', borderBottom: '1px solid #2a2f3e' }}>
+              <tr className="ql-nguoi-dung-page__table-head">
                 <th style={thStyle}>Người dùng</th>
                 <th style={thStyle}>Email</th>
                 <th style={thStyle}>Số điện thoại</th>
@@ -147,7 +148,7 @@ function UserManagement() {
             </thead>
             <tbody>
               {filteredUsers.map((user) => (
-                <tr key={user.id} style={{ borderBottom: '1px solid #2a2f3e' }}>
+                <tr key={user.id} className="ql-nguoi-dung-page__table-row">
                   <td style={tdStyle}>
                     <div style={{ color: 'white', fontWeight: 700 }}>{user.name}</div>
                     <div style={{ color: '#8b92a7', fontSize: '13px' }}>{formatDate(user.createdAt)}</div>
@@ -159,7 +160,7 @@ function UserManagement() {
                   </td>
                   <td style={{ ...tdStyle, textAlign: 'center' }}>{user._count?.orders ?? 0}</td>
                   <td style={{ ...tdStyle, textAlign: 'center' }}>
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                    <div className="ql-nguoi-dung-page__actions">
                       <button onClick={() => setSelectedUserId(user.id)} style={actionButton('#3b82f6')}>Chi tiết</button>
                       <button onClick={() => openEditModal(user)} style={actionButton('#10b981')}>Sửa</button>
                       <button onClick={() => handleDelete(user.id)} style={actionButton('#ef4444')}>Xóa</button>
