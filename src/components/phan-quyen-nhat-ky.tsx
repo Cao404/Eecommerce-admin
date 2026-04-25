@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Header from './Header'
 import { api, type ApiOrderHistoryEntry, type ApiUser } from '../api'
 import { useStore } from '../store/useStore'
+import '../styles/phan-quyen-nhat-ky.css'
 
 type UserRole = 'admin' | 'user'
 type TabKey = 'users' | 'logs'
@@ -253,7 +254,7 @@ function Rights() {
   const selectedUser = selectedUserId ? users.find((item) => item.id === selectedUserId) ?? null : null
 
   return (
-    <div style={{ color: 'white', minHeight: '100vh' }}>
+    <div className="phan-quyen-page">
       <Header
         title="PHÂN QUYỀN & NHẬT KÝ"
         searchValue={searchTerm}
@@ -261,8 +262,8 @@ function Rights() {
         searchPlaceholder="Tìm kiếm người dùng..."
       />
 
-      <div style={{ padding: '40px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px', marginBottom: '30px' }}>
+      <div className="phan-quyen-page__content">
+        <div className="phan-quyen-page__stats">
           {stats.map((stat) => (
             <div
               key={stat.label}
@@ -298,8 +299,8 @@ function Rights() {
           ))}
         </div>
 
-        <div style={{ background: '#1a1f2e', borderRadius: '8px', border: '1px solid #2a2f3e', overflow: 'hidden' }}>
-          <div style={{ display: 'flex', borderBottom: '1px solid #2a2f3e', overflowX: 'auto' }}>
+        <div className="phan-quyen-page__panel">
+          <div className="phan-quyen-page__tabs">
             <button
               onClick={() => setActiveTab('users')}
               style={tabButtonStyle(activeTab === 'users')}

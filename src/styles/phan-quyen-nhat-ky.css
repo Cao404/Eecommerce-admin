@@ -1,0 +1,6 @@
+﻿.phan-quyen-page { color: white; min-height: 100vh; }
+.phan-quyen-page__content { padding: 40px; }
+.phan-quyen-page__stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-bottom: 30px; }
+.phan-quyen-page__stat { background: #1a1f2e; padding: 28px; border-radius: 12px; border: 1px solid #2a2f3e; display: flex; align-items: center; gap: 20px; }
+.phan-quyen-page__panel { background: #1a1f2e; border-radius: 8px; border: 1px solid #2a2f3e; overflow: hidden; }
+.phan-quyen-page__tabs { display: flex; border-bottom: 1px solid #2a2f3e; overflow-x: auto; }
