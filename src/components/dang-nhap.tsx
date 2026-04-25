@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useStore } from '../store/useStore'
 import { api } from '../api'
-import Register from './Register'
+import Register from './dang-ky'
 
 function Login() {
   const [email, setEmail] = useState('')
