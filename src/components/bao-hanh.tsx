@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react'
 import Header from './Header'
+import '../styles/bao-hanh.css'
 import { api, type ApiDispute } from '../api'
 
 function Warranty() {
@@ -68,21 +69,21 @@ function Warranty() {
   }
 
   return (
-    <div style={{ color: 'white', minHeight: '100vh' }}>
+    <div className="bao-hanh-page">
       <Header title="KHIẾU NẠI & TRANH CHẤP" searchValue={searchTerm} onSearchChange={setSearchTerm} searchPlaceholder="Tìm kiếm tranh chấp..." />
 
-      <div style={{ padding: '40px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '18px', marginBottom: '24px' }}>
+      <div className="bao-hanh-page__content">
+        <div className="bao-hanh-page__stats">
           {stats.map((stat) => (
-            <div key={stat.label} style={statCardStyle}>
+            <div key={stat.label} className="bao-hanh-page__stat" style={statCardStyle}>
               <div style={{ color: stat.color, fontSize: '13px', fontWeight: 700 }}>{stat.label}</div>
               <div style={{ fontSize: '30px', fontWeight: 800, marginTop: '8px' }}>{stat.value}</div>
             </div>
           ))}
         </div>
 
-        <div style={panelStyle}>
-          <div style={tabsStyle}>
+        <div className="bao-hanh-page__panel" style={panelStyle}>
+          <div className="bao-hanh-page__tabs" style={tabsStyle}>
             {[
               ['all', 'Tất cả'],
               ['pending', 'Chờ xử lý'],
@@ -105,11 +106,11 @@ function Warranty() {
             ))}
           </div>
 
-          <div style={toolbarStyle}>
+          <div className="bao-hanh-page__toolbar" style={toolbarStyle}>
             <div style={{ color: '#8b92a7' }}>{loading ? 'Đang tải...' : error || `Hiển thị ${filtered.length} tranh chấp`}</div>
           </div>
 
-          <table style={tableStyle}>
+          <table className="bao-hanh-page__table" style={tableStyle}>
             <thead>
               <tr style={headRowStyle}>
                 <th style={thStyle}>Mã</th>

@@ -1,0 +1,7 @@
+﻿.bao-hanh-page { color: white; min-height: 100vh; }
+.bao-hanh-page__content { padding: 40px; }
+.bao-hanh-page__stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-bottom: 24px; }
+.bao-hanh-page__panel { }
+.bao-hanh-page__tabs { display: flex; }
+.bao-hanh-page__toolbar { }
+.bao-hanh-page__table { width: 100%; border-collapse: collapse; }
