@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useStore } from '../store/useStore'
 import { api } from '../api'
 import Register from './dang-ky'
+import '../styles/dang-nhap.css'
 
 function Login() {
   const [email, setEmail] = useState('')
@@ -27,7 +28,7 @@ function Login() {
   }
 
   return (
-    <div style={{ 
+    <div className="dang-nhap-page" style={{ 
       minHeight: '100vh', 
       background: '#0f1419',
       display: 'flex',
@@ -35,7 +36,7 @@ function Login() {
       justifyContent: 'center',
       padding: '20px'
     }}>
-      <div style={{
+      <div className="dang-nhap-page__card" style={{
         background: '#1a1f2e',
         padding: '48px',
         borderRadius: '16px',
@@ -43,7 +44,7 @@ function Login() {
         maxWidth: '450px',
         width: '100%'
       }}>
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+        <div className="dang-nhap-page__header" style={{ textAlign: 'center', marginBottom: '40px' }}>
           <h1 style={{ 
             fontSize: '32px', 
             fontWeight: 700, 
