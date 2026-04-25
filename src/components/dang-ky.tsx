@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useStore } from '../store/useStore'
 import { api } from '../api'
+import '../styles/dang-ky.css'
 
 interface RegisterProps {
   onBackToLogin: () => void
@@ -67,7 +68,7 @@ function Register({ onBackToLogin }: RegisterProps) {
   }
 
   return (
-    <div style={{
+    <div className="dang-ky-page" style={{
       minHeight: '100vh',
       display: 'flex',
       alignItems: 'center',
@@ -75,7 +76,7 @@ function Register({ onBackToLogin }: RegisterProps) {
       background: '#0f1419',
       padding: '20px'
     }}>
-      <div style={{
+      <div className="dang-ky-page__card" style={{
         background: '#1a1f2e',
         padding: '40px',
         borderRadius: '12px',
@@ -84,7 +85,7 @@ function Register({ onBackToLogin }: RegisterProps) {
         border: '1px solid #2a2f3e',
         boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
       }}>
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <div className="dang-ky-page__header" style={{ textAlign: 'center', marginBottom: '32px' }}>
           <h1 style={{ fontSize: '28px', fontWeight: 600, color: 'white', marginBottom: '8px' }}>
             Shop.vn
           </h1>
@@ -92,7 +93,7 @@ function Register({ onBackToLogin }: RegisterProps) {
         </div>
 
         {error && (
-          <div style={{
+          <div className="dang-ky-page__error" style={{
             padding: '12px 16px',
             background: '#ef444420',
             border: '1px solid #ef4444',
