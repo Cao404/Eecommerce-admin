@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Header from './Header'
 import { api, type ApiOrder, type ApiUser } from '../api'
 import { useStore } from '../store/useStore'
+import '../styles/khach-hang.css'
 
 type CustomerStatus = 'active' | 'inactive'
 type CustomerFilter = 'all' | CustomerStatus
@@ -183,7 +184,7 @@ function Customers() {
   }
 
   return (
-    <div style={{ color: 'white', minHeight: '100vh' }}>
+    <div className="khach-hang-page">
       <Header
         title="QUẢN LÝ KHÁCH HÀNG"
         searchValue={searchTerm}
@@ -191,15 +192,8 @@ function Customers() {
         searchPlaceholder="Tìm kiếm khách hàng..."
       />
 
-      <div style={{ padding: '40px' }}>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '24px',
-            marginBottom: '30px',
-          }}
-        >
+      <div className="khach-hang-page__content">
+        <div className="khach-hang-page__stats">
           {stats.map((stat) => (
             <div
               key={stat.label}
@@ -237,18 +231,8 @@ function Customers() {
           ))}
         </div>
 
-        <div style={{ background: '#1a1f2e', borderRadius: '8px', border: '1px solid #2a2f3e', overflow: 'hidden' }}>
-          <div
-            style={{
-              padding: '20px 24px',
-              borderBottom: '1px solid #2a2f3e',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              gap: '16px',
-              flexWrap: 'wrap',
-            }}
-          >
+        <div className="khach-hang-page__panel">
+          <div className="khach-hang-page__panel-header">
             <div>
               <div style={{ fontSize: '16px', color: 'white', fontWeight: 500 }}>Danh sách khách hàng</div>
               <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
