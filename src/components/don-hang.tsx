@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { api, type ApiOrderHistoryEntry } from '../api'
 import { useStore } from '../store/useStore'
 import Header from './Header'
 import '../styles/don-hang.css'
-import '../styles/don-hang.css'
+
+type OrderStatus = 'all' | 'pending' | 'approved' | 'shipping' | 'delivered' | 'rejected' | 'cancelled'
 
 function Orders() {
   const orders = useStore((state) => state.pendingOrders)
@@ -12,7 +13,7 @@ function Orders() {
   const rejectOrder = useStore((state) => state.rejectOrder)
 
   const [searchTerm, setSearchTerm] = useState('')
-  const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'approved' | 'shipping' | 'delivered' | 'rejected' | 'cancelled'>('all')
+  const [activeTab, setActiveTab] = useState<OrderStatus>('all')
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null)
   const [history, setHistory] = useState<ApiOrderHistoryEntry[]>([])
   const [historyLoading, setHistoryLoading] = useState(false)
@@ -31,14 +32,14 @@ function Orders() {
   )
 
   const tabs = [
-    { id: 'all', label: 'Tất cả', count: orders.length },
-    { id: 'pending', label: 'Chờ duyệt', count: orders.filter((order) => order.status === 'pending').length },
-    { id: 'approved', label: 'Đã duyệt', count: orders.filter((order) => order.status === 'approved').length },
-    { id: 'shipping', label: 'Đang giao', count: orders.filter((order) => order.status === 'shipping').length },
-    { id: 'delivered', label: 'Đã giao', count: orders.filter((order) => order.status === 'delivered').length },
-    { id: 'rejected', label: 'Từ chối', count: orders.filter((order) => order.status === 'rejected').length },
-    { id: 'cancelled', label: 'Đã hủy', count: orders.filter((order) => order.status === 'cancelled').length },
-  ] as const
+    { id: 'all' as const, label: 'Tất cả', count: orders.length },
+    { id: 'pending' as const, label: 'Chờ duyệt', count: orders.filter((order) => order.status === 'pending').length },
+    { id: 'approved' as const, label: 'Đã duyệt', count: orders.filter((order) => order.status === 'approved').length },
+    { id: 'shipping' as const, label: 'Đang giao', count: orders.filter((order) => order.status === 'shipping').length },
+    { id: 'delivered' as const, label: 'Đã giao', count: orders.filter((order) => order.status === 'delivered').length },
+    { id: 'rejected' as const, label: 'Từ chối', count: orders.filter((order) => order.status === 'rejected').length },
+    { id: 'cancelled' as const, label: 'Đã hủy', count: orders.filter((order) => order.status === 'cancelled').length },
+  ]
 
   const syncStatus = async (id: number, status: 'approved' | 'shipping' | 'delivered' | 'rejected') => {
     const updated = await api.updateOrderStatus(id, status)
@@ -97,18 +98,14 @@ function Orders() {
       setHistoryLoading(true)
       try {
         const data = await api.getOrderHistory(selectedOrderId)
-        if (!cancelled) {
-          setHistory(data)
-        }
+        if (!cancelled) setHistory(data)
       } catch (error) {
         if (!cancelled) {
           setHistory([])
           console.error('Failed to load order history:', error)
         }
       } finally {
-        if (!cancelled) {
-          setHistoryLoading(false)
-        }
+        if (!cancelled) setHistoryLoading(false)
       }
     }
 
@@ -120,7 +117,7 @@ function Orders() {
   }, [selectedOrderId])
 
   return (
-    <div className="orders-page" style={{ color: 'white', minHeight: '100vh' }}>
+    <div className="orders-page">
       <Header
         title="QUẢN LÝ ĐƠN HÀNG"
         searchValue={searchTerm}
@@ -128,71 +125,70 @@ function Orders() {
         searchPlaceholder="Tìm kiếm đơn hàng..."
       />
 
-      <div className="orders-page__content" style={{ padding: '40px' }}>
-        <div className="orders-page__tabs" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
+      <div className="orders-page__content">
+        <div className="orders-page__tabs">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`orders-page__tab ${activeTab === tab.id ? 'orders-page__tab--active' : ''}`}
-              style={{
-                padding: '10px 16px',
-                borderRadius: '999px',
-                border: activeTab === tab.id ? '1px solid #8c85ef' : '1px solid #2a3140',
-                background: activeTab === tab.id ? '#7a73ea' : '#151a22',
-                color: 'white',
-                cursor: 'pointer',
-                fontWeight: 700,
-              }}
             >
               {tab.label} ({tab.count})
             </button>
           ))}
         </div>
 
-        <div className="orders-page__card" style={{ background: '#1a1f2e', border: '1px solid #2a2f3e', borderRadius: '12px', overflow: 'hidden' }}>
-          <table className="orders-page__table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="orders-page__card">
+          <table className="orders-page__table">
             <thead className="orders-page__table-head">
-              <tr style={{ background: '#0f1419', borderBottom: '1px solid #2a2f3e' }}>
-                <th style={thStyle}>Mã đơn</th>
-                <th style={thStyle}>Khách hàng</th>
-                <th style={{ ...thStyle, textAlign: 'center' }}>Sản phẩm</th>
-                <th style={thStyle}>Tổng tiền</th>
-                <th style={thStyle}>Thời gian</th>
-                <th style={{ ...thStyle, textAlign: 'center' }}>Trạng thái</th>
-                <th style={{ ...thStyle, textAlign: 'center' }}>Hành động</th>
+              <tr className="orders-page__table-head-row">
+                <th className="orders-page__table-th">Mã đơn</th>
+                <th className="orders-page__table-th">Khách hàng</th>
+                <th className="orders-page__table-th orders-page__table-th--center">Sản phẩm</th>
+                <th className="orders-page__table-th">Tổng tiền</th>
+                <th className="orders-page__table-th">Thời gian</th>
+                <th className="orders-page__table-th orders-page__table-th--center">Trạng thái</th>
+                <th className="orders-page__table-th orders-page__table-th--center">Hành động</th>
               </tr>
             </thead>
             <tbody>
               {filteredOrders.map((order) => (
-                <tr key={order.id} className="orders-page__table-row" style={{ borderBottom: '1px solid #2a2f3e' }}>
-                  <td style={tdStyle}>{order.orderCode}</td>
-                  <td style={tdStyle}>
-                    <div style={{ color: 'white', fontWeight: 700 }}>{order.customerName}</div>
-                    <div style={{ color: '#8b92a7', fontSize: '13px' }}>{order.customerEmail}</div>
+                <tr key={order.id} className="orders-page__table-row">
+                  <td className="orders-page__table-td">{order.orderCode}</td>
+                  <td className="orders-page__table-td">
+                    <div className="orders-page__customer-name">{order.customerName}</div>
+                    <div className="orders-page__customer-email">{order.customerEmail}</div>
                   </td>
-                  <td style={{ ...tdStyle, textAlign: 'center' }}>{order.items.length}</td>
-                  <td style={tdStyle}>{money(order.total)}</td>
-                  <td style={tdStyle}>{new Date(order.timestamp).toLocaleString('vi-VN')}</td>
-                  <td style={{ ...tdStyle, textAlign: 'center' }}>
-                    <span style={statusBadge(order.status)}>{statusText(order.status)}</span>
+                  <td className="orders-page__table-td orders-page__table-td--center">{order.items.length}</td>
+                  <td className="orders-page__table-td">{money(order.total)}</td>
+                  <td className="orders-page__table-td">{new Date(order.timestamp).toLocaleString('vi-VN')}</td>
+                  <td className="orders-page__table-td orders-page__table-td--center">
+                    <span className={`orders-page__badge orders-page__badge--${badgeSuffix(order.status)}`}>
+                      {statusText(order.status)}
+                    </span>
                   </td>
-                  <td className="orders-page__table-center" style={{ ...tdStyle, textAlign: 'center' }}>
-                    <div className="orders-page__actions" style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                      <button onClick={() => setSelectedOrderId(order.id)} style={actionButton('#3b82f6')}>Chi tiết</button>
+                  <td className="orders-page__table-td orders-page__table-td--center">
+                    <div className="orders-page__actions">
+                      <button onClick={() => setSelectedOrderId(order.id)} className="orders-page__btn orders-page__btn--primary">
+                        Chi tiết
+                      </button>
                       {order.status === 'pending' && (
                         <>
-                          <button onClick={() => handleApprove(order.id)} style={actionButton('#10b981')}>Duyệt</button>
-                          <button onClick={() => handleReject(order.id)} style={actionButton('#ef4444')}>Từ chối</button>
+                          <button onClick={() => handleApprove(order.id)} className="orders-page__btn orders-page__btn--success">
+                            Duyệt
+                          </button>
+                          <button onClick={() => handleReject(order.id)} className="orders-page__btn orders-page__btn--danger">
+                            Từ chối
+                          </button>
                         </>
                       )}
                       {order.status === 'approved' && (
-                        <button onClick={() => void handleAdvance(order.id, 'shipping')} style={actionButton('#3b82f6')}>
+                        <button onClick={() => void handleAdvance(order.id, 'shipping')} className="orders-page__btn orders-page__btn--primary">
                           Đang giao
                         </button>
                       )}
                       {order.status === 'shipping' && (
-                        <button onClick={() => void handleAdvance(order.id, 'delivered')} style={actionButton('#14b8a6')}>
+                        <button onClick={() => void handleAdvance(order.id, 'delivered')} className="orders-page__btn orders-page__btn--teal">
                           Đã giao
                         </button>
                       )}
@@ -206,83 +202,46 @@ function Orders() {
       </div>
 
       {selectedOrder && (
-        <div
-          className="orders-page__detail-overlay"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0, 0, 0, 0.75)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '24px',
-            zIndex: 2000,
-          }}
-          onClick={() => setSelectedOrderId(null)}
-        >
-          <div
-            className="orders-page__detail-card"
-            style={{
-              width: 'min(100%, 920px)',
-              maxHeight: '90vh',
-              overflow: 'hidden',
-              background: '#1a1f2e',
-              border: '1px solid #2a2f3e',
-              borderRadius: '18px',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="orders-page__detail-header" style={{ padding: '24px', borderBottom: '1px solid #2a2f3e', display: 'flex', justifyContent: 'space-between', gap: '12px', alignItems: 'center' }}>
+        <div className="orders-page__detail-overlay" onClick={() => setSelectedOrderId(null)}>
+          <div className="orders-page__detail-card" onClick={(event) => event.stopPropagation()}>
+            <div className="orders-page__detail-header">
               <div>
-                <h2 style={{ margin: 0, fontSize: '22px', color: 'white' }}>Chi tiết đơn hàng</h2>
-                <div className="orders-page__detail-subtitle" style={{ marginTop: '8px', color: '#8b92a7' }}>
+                <h2 className="orders-page__detail-title">Chi tiết đơn hàng</h2>
+                <div className="orders-page__detail-subtitle">
                   {selectedOrder.orderCode} · {statusText(selectedOrder.status)}
                 </div>
               </div>
-              <button
-                onClick={() => setSelectedOrderId(null)}
-                className="orders-page__detail-close"
-                style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '10px',
-                  border: '1px solid #2a2f3e',
-                  background: '#0f1419',
-                  color: 'white',
-                  cursor: 'pointer',
-                  fontSize: '18px',
-                }}
-              >
+              <button onClick={() => setSelectedOrderId(null)} className="orders-page__detail-close">
                 ×
               </button>
             </div>
 
-            <div className="orders-page__detail-body" style={{ padding: '24px', overflowY: 'auto', display: 'grid', gap: '18px' }}>
-              <div className="orders-page__detail-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
+            <div className="orders-page__detail-body">
+              <div className="orders-page__detail-grid">
                 <InfoCard label="Khách hàng" value={selectedOrder.customerName} subValue={selectedOrder.customerEmail} />
                 <InfoCard label="Tổng tiền" value={money(selectedOrder.total)} subValue={new Date(selectedOrder.timestamp).toLocaleString('vi-VN')} />
                 <InfoCard label="Trạng thái" value={statusText(selectedOrder.status)} subValue={selectedOrder.orderCode} />
               </div>
 
-              <section className="orders-page__section" style={panelStyle}>
-                <div className="orders-page__section-title" style={sectionTitleStyle}>Lịch sử xử lý</div>
+              <section className="orders-page__section">
+                <div className="orders-page__section-title">Lịch sử xử lý</div>
                 {historyLoading ? (
-                  <div className="orders-page__empty" style={emptyStateStyle}>Đang tải lịch sử...</div>
+                  <div className="orders-page__empty">Đang tải lịch sử...</div>
                 ) : history.length === 0 ? (
-                  <div className="orders-page__empty" style={emptyStateStyle}>Chưa có lịch sử xử lý.</div>
+                  <div className="orders-page__empty">Chưa có lịch sử xử lý.</div>
                 ) : (
-                  <div style={{ display: 'grid', gap: '10px' }}>
+                  <div className="orders-page__history-list">
                     {history.map((entry) => (
-                      <div key={entry.id} className="orders-page__history-item" style={historyItemStyle}>
+                      <div key={entry.id} className="orders-page__history-item">
                         <div>
-                          <div style={{ color: 'white', fontWeight: 700, marginBottom: '4px' }}>{entry.actorName}</div>
-                          <div style={{ color: '#8b92a7', fontSize: '13px' }}>{entry.note || historyActionLabel(entry.action)}</div>
+                          <div className="orders-page__history-title">{entry.actorName}</div>
+                          <div className="orders-page__history-note">{entry.note || historyActionLabel(entry.action)}</div>
                         </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <div style={{ color: '#3b82f6', fontWeight: 700, marginBottom: '4px' }}>{entry.toStatus ? statusText(entry.toStatus) : historyActionLabel(entry.action)}</div>
-                          <div style={{ color: '#8b92a7', fontSize: '12px' }}>{new Date(entry.createdAt).toLocaleString('vi-VN')}</div>
+                        <div className="orders-page__history-meta">
+                          <div className="orders-page__history-status">
+                            {entry.toStatus ? statusText(entry.toStatus) : historyActionLabel(entry.action)}
+                          </div>
+                          <div className="orders-page__history-time">{new Date(entry.createdAt).toLocaleString('vi-VN')}</div>
                         </div>
                       </div>
                     ))}
@@ -290,37 +249,41 @@ function Orders() {
                 )}
               </section>
 
-              <section className="orders-page__section" style={panelStyle}>
-                <div className="orders-page__section-title" style={sectionTitleStyle}>S???n ph???m</div>
-                <div style={{ display: 'grid', gap: '10px' }}>
+              <section className="orders-page__section">
+                <div className="orders-page__section-title">Sản phẩm</div>
+                <div className="orders-page__list">
                   {selectedOrder.items.map((item, index) => (
-                    <div key={index} className="orders-page__line-item" style={lineItemStyle}>
+                    <div key={index} className="orders-page__line-item">
                       <div>
-                        <div style={{ color: 'white', fontWeight: 700 }}>{item.productName}</div>
-                        <div style={{ color: '#8b92a7', fontSize: '13px' }}>Số lượng: {item.quantity}</div>
+                        <div className="orders-page__item-name">{item.productName}</div>
+                        <div className="orders-page__item-meta">Số lượng: {item.quantity}</div>
                       </div>
-                      <div style={{ color: '#f97316', fontWeight: 700 }}>{money(item.price)}</div>
+                      <div className="orders-page__item-price">{money(item.price)}</div>
                     </div>
                   ))}
                 </div>
               </section>
 
               {selectedOrder.status === 'pending' && (
-                <div className="orders-page__detail-actions" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-                  <button onClick={() => handleReject(selectedOrder.id)} style={actionButton('#ef4444')}>Từ chối</button>
-                  <button onClick={() => handleApprove(selectedOrder.id)} style={actionButton('#10b981')}>Duyệt đơn</button>
+                <div className="orders-page__detail-actions">
+                  <button onClick={() => handleReject(selectedOrder.id)} className="orders-page__btn orders-page__btn--danger">
+                    Từ chối
+                  </button>
+                  <button onClick={() => handleApprove(selectedOrder.id)} className="orders-page__btn orders-page__btn--success">
+                    Duyệt đơn
+                  </button>
                 </div>
               )}
               {selectedOrder.status === 'approved' && (
-                <div className="orders-page__detail-actions" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-                  <button onClick={() => void handleAdvance(selectedOrder.id, 'shipping')} style={actionButton('#3b82f6')}>
+                <div className="orders-page__detail-actions">
+                  <button onClick={() => void handleAdvance(selectedOrder.id, 'shipping')} className="orders-page__btn orders-page__btn--primary">
                     Chuyển sang đang giao
                   </button>
                 </div>
               )}
               {selectedOrder.status === 'shipping' && (
-                <div className="orders-page__detail-actions" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-                  <button onClick={() => void handleAdvance(selectedOrder.id, 'delivered')} style={actionButton('#14b8a6')}>
+                <div className="orders-page__detail-actions">
+                  <button onClick={() => void handleAdvance(selectedOrder.id, 'delivered')} className="orders-page__btn orders-page__btn--teal">
                     Xác nhận đã giao
                   </button>
                 </div>
@@ -333,53 +296,12 @@ function Orders() {
   )
 }
 
-const thStyle: CSSProperties = {
-  padding: '16px 18px',
-  textAlign: 'left',
-  color: '#8b92a7',
-  fontSize: '12px',
-  fontWeight: 700,
-  textTransform: 'uppercase',
-  letterSpacing: '1px',
-}
-
-const tdStyle: CSSProperties = {
-  padding: '16px 18px',
-  color: '#cbd5e1',
-}
-
-function actionButton(color: string): CSSProperties {
-  return {
-    padding: '8px 12px',
-    borderRadius: '8px',
-    border: 'none',
-    background: color,
-    color: 'white',
-    cursor: 'pointer',
-    fontWeight: 700,
-  }
-}
-
-  function statusBadge(status: string): CSSProperties {
-  const colorMap: Record<string, string> = {
-    pending: '#f97316',
-    approved: '#10b981',
-    shipping: '#3b82f6',
-    delivered: '#14b8a6',
-    rejected: '#ef4444',
-    cancelled: '#6b7280',
-  }
-
-  const color = colorMap[status] ?? '#6b7280'
-
-  return {
-    padding: '6px 12px',
-    borderRadius: '999px',
-    background: `${color}20`,
-    color,
-    fontWeight: 700,
-    fontSize: '13px',
-  }
+function money(value: number) {
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+    maximumFractionDigits: 0,
+  }).format(value)
 }
 
 function statusText(status: string) {
@@ -408,12 +330,18 @@ function historyActionLabel(action: string) {
   return map[action] ?? action
 }
 
-function money(value: number) {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-    maximumFractionDigits: 0,
-  }).format(value)
+function badgeSuffix(status: string) {
+  return status === 'approved'
+    ? 'approved'
+    : status === 'shipping'
+      ? 'shipping'
+      : status === 'delivered'
+        ? 'delivered'
+        : status === 'rejected'
+          ? 'rejected'
+          : status === 'pending'
+            ? 'pending'
+            : 'cancelled'
 }
 
 function InfoCard({
@@ -426,51 +354,12 @@ function InfoCard({
   subValue?: string
 }) {
   return (
-    <div style={panelStyle}>
-      <div style={{ color: '#8b92a7', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>{label}</div>
-      <div style={{ color: 'white', fontSize: '18px', fontWeight: 700, marginBottom: subValue ? '6px' : 0 }}>{value}</div>
-      {subValue && <div style={{ color: '#8b92a7', fontSize: '13px' }}>{subValue}</div>}
+    <div className="orders-page__info-card">
+      <div className="orders-page__detail-info-label">{label}</div>
+      <div className="orders-page__detail-info-value">{value}</div>
+      {subValue && <div className="orders-page__detail-info-sub">{subValue}</div>}
     </div>
   )
-}
-
-const panelStyle: CSSProperties = {
-  background: '#151a22',
-  border: '1px solid #2a2f3e',
-  borderRadius: '14px',
-  padding: '18px',
-}
-
-const sectionTitleStyle: CSSProperties = {
-  color: 'white',
-  fontWeight: 700,
-  marginBottom: '14px',
-  fontSize: '16px',
-}
-
-const emptyStateStyle: CSSProperties = {
-  color: '#8b92a7',
-  padding: '18px 0',
-}
-
-const historyItemStyle: CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  gap: '12px',
-  padding: '14px',
-  borderRadius: '12px',
-  background: '#0f1419',
-  border: '1px solid #2a2f3e',
-}
-
-const lineItemStyle: CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  gap: '12px',
-  padding: '14px',
-  borderRadius: '12px',
-  background: '#0f1419',
-  border: '1px solid #2a2f3e',
 }
 
 export default Orders

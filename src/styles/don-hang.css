@@ -38,14 +38,15 @@
   background: #0f1419;
   border-bottom: 1px solid #2a2f3e;
 }
+.orders-page__table-head-row {
+  background: #0f1419;
+  border-bottom: 1px solid #2a2f3e;
+}
 .orders-page__table-row {
   border-bottom: 1px solid #2a2f3e;
 }
-.orders-page__table th,
-.orders-page__table td {
+.orders-page__table-th {
   padding: 16px 18px;
-}
-.orders-page__table-head th {
   text-align: left;
   color: #8b92a7;
   font-size: 12px;
@@ -53,7 +54,14 @@
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-.orders-page__table-center {
+.orders-page__table-th--center {
+  text-align: center;
+}
+.orders-page__table-td {
+  padding: 16px 18px;
+  color: #cbd5e1;
+}
+.orders-page__table-td--center {
   text-align: center;
 }
 .orders-page__actions {
@@ -61,6 +69,14 @@
   gap: 8px;
   justify-content: center;
   flex-wrap: wrap;
+}
+.orders-page__customer-name {
+  color: white;
+  font-weight: 700;
+}
+.orders-page__customer-email {
+  color: #8b92a7;
+  font-size: 13px;
 }
 .orders-page__detail-overlay {
   position: fixed;
@@ -117,6 +133,11 @@
   color: #8b92a7;
   padding: 18px 0;
 }
+.orders-page__history-list,
+.orders-page__list {
+  display: grid;
+  gap: 10px;
+}
 .orders-page__history-item,
 .orders-page__line-item {
   display: flex;
@@ -169,6 +190,39 @@
   color: #8b92a7;
   font-size: 13px;
 }
+.orders-page__info-card {
+  background: #151a22;
+  border: 1px solid #2a2f3e;
+  border-radius: 14px;
+  padding: 18px;
+}
+.orders-page__history-title,
+.orders-page__item-name {
+  color: white;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.orders-page__history-note,
+.orders-page__item-meta {
+  color: #8b92a7;
+  font-size: 13px;
+}
+.orders-page__history-meta {
+  text-align: right;
+}
+.orders-page__history-status {
+  color: #3b82f6;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.orders-page__history-time {
+  color: #8b92a7;
+  font-size: 12px;
+}
+.orders-page__item-price {
+  color: #f97316;
+  font-weight: 700;
+}
 .orders-page__btn {
   padding: 8px 12px;
   border-radius: 8px;
@@ -187,6 +241,12 @@
   font-weight: 700;
   font-size: 13px;
 }
+.orders-page__badge--pending { background: #f9731620; color: #f97316; }
+.orders-page__badge--approved { background: #10b98120; color: #10b981; }
+.orders-page__badge--shipping { background: #3b82f620; color: #3b82f6; }
+.orders-page__badge--delivered { background: #14b8a620; color: #14b8a6; }
+.orders-page__badge--rejected { background: #ef444420; color: #ef4444; }
+.orders-page__badge--cancelled { background: #6b728020; color: #6b7280; }
 
 .order-approval {
   position: fixed;
