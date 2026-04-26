@@ -225,10 +225,10 @@ function Customers() {
                 {stat.icon}
               </div>
               <div>
-                <div className="khach-hang-page__stat-value" style={{ fontSize: '32px', fontWeight: 700, color: 'white', marginBottom: '4px' }}>
+                <div className="khach-hang-page__stat-value">
                   {stat.value}
                 </div>
-                <div className="khach-hang-page__stat-label" style={{ fontSize: '14px', color: '#8b92a7' }}>{stat.label}</div>
+                <div className="khach-hang-page__stat-label">{stat.label}</div>
               </div>
             </div>
           ))}
@@ -237,12 +237,12 @@ function Customers() {
         <div className="khach-hang-page__panel">
           <div className="khach-hang-page__panel-header">
             <div>
-              <div className="khach-hang-page__panel-title" style={{ fontSize: '16px', color: 'white', fontWeight: 500 }}>Danh sách khách hàng</div>
-              <div className="khach-hang-page__panel-subtitle" style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+              <div className="khach-hang-page__panel-title">Danh sách khách hàng</div>
+              <div className="khach-hang-page__panel-subtitle">
                 Dữ liệu lấy từ người dùng thật và đơn hàng trên backend
               </div>
             </div>
-            <div className="khach-hang-page__panel-controls" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div className="khach-hang-page__panel-controls">
               <select
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value as CustomerFilter)}
@@ -264,7 +264,7 @@ function Customers() {
             </div>
           </div>
 
-          <div style={{ padding: '16px 24px', borderBottom: '1px solid #2a2f3e', fontSize: '12px', color: '#6b7280' }}>
+          <div className="khach-hang-page__summary">
             {loading
               ? 'Đang tải dữ liệu khách hàng...'
               : error
@@ -275,7 +275,7 @@ function Customers() {
                   )} trong ${filteredCustomers.length} kết quả`}
           </div>
 
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table className="khach-hang-page__table">
             <thead>
               <tr style={{ background: '#0f1419', borderBottom: '1px solid #2a2f3e' }}>
                 <th style={{ padding: '20px 28px', textAlign: 'left', width: '50px' }}>
