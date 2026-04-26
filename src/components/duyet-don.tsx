@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useStore } from '../store/useStore'
 import { api, type ApiOrderHistoryEntry } from '../api'
+import '../styles/duyet-don.css'
 
 interface OrderApprovalProps {
   showList: boolean
@@ -131,12 +132,12 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
               padding: '24px',
               borderBottom: '1px solid #2a2f3e'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div className="duyet-don__header-row">
                 <div>
-                  <h2 style={{ fontSize: '22px', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
+                  <h2 className="duyet-don__title">
                     🛒 Đơn Hàng Chờ Duyệt
                   </h2>
-                  <div style={{ fontSize: '14px', color: '#8b92a7' }}>
+                  <div className="duyet-don__subtitle">
                     Hiện có {filteredOrders.length} đơn hàng đang chờ xử lý
                   </div>
                 </div>
@@ -189,30 +190,26 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
             }}
             className="order-list-scroll"
             >
-              <style>{`
-                .order-list-scroll::-webkit-scrollbar {
-                  display: none;
-                }
-              `}</style>
+              
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ borderBottom: '2px solid #2a2f3e' }}>
-                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', color: '#8b92a7', textTransform: 'uppercase', fontWeight: 600 }}>
+                  <tr className="duyet-don__table-head">
+                    <th className="duyet-don__th">
                       Mã Đơn
                     </th>
-                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', color: '#8b92a7', textTransform: 'uppercase', fontWeight: 600 }}>
+                    <th className="duyet-don__th">
                       Khách Hàng
                     </th>
-                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', color: '#8b92a7', textTransform: 'uppercase', fontWeight: 600 }}>
+                    <th className="duyet-don__th">
                       Sản Phẩm
                     </th>
-                    <th style={{ padding: '12px', textAlign: 'right', fontSize: '12px', color: '#8b92a7', textTransform: 'uppercase', fontWeight: 600 }}>
+                    <th className="duyet-don__th duyet-don__th--right">
                       Tổng Tiền
                     </th>
-                    <th style={{ padding: '12px', textAlign: 'center', fontSize: '12px', color: '#8b92a7', textTransform: 'uppercase', fontWeight: 600 }}>
+                    <th className="duyet-don__th duyet-don__th--center">
                       Thời Gian
                     </th>
-                    <th style={{ padding: '12px', textAlign: 'center', fontSize: '12px', color: '#8b92a7', textTransform: 'uppercase', fontWeight: 600 }}>
+                    <th className="duyet-don__th duyet-don__th--center">
                       Thao Tác
                     </th>
                   </tr>
@@ -226,20 +223,20 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
                     onMouseEnter={(e) => e.currentTarget.style.background = '#0f1419'}
                     onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >
-                      <td style={{ padding: '16px' }}>
+                      <td className="duyet-don__td">
                         <div style={{ color: '#3b82f6', fontWeight: 600, fontSize: '14px' }}>
                           {order.orderCode}
                         </div>
                       </td>
-                      <td style={{ padding: '16px' }}>
+                      <td className="duyet-don__td">
                         <div style={{ color: 'white', fontWeight: 500, fontSize: '14px', marginBottom: '4px' }}>
                           {order.customerName}
                         </div>
-                        <div style={{ color: '#8b92a7', fontSize: '12px' }}>
+                        <div className="duyet-don__history-note">
                           {order.customerEmail}
                         </div>
                       </td>
-                      <td style={{ padding: '16px' }}>
+                      <td className="duyet-don__td">
                         <div style={{ color: 'white', fontSize: '14px' }}>
                           {order.items.length} sản phẩm
                         </div>
@@ -248,20 +245,20 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
                           {order.items.length > 2 && '...'}
                         </div>
                       </td>
-                      <td style={{ padding: '16px', textAlign: 'right' }}>
+                      <td className="duyet-don__td duyet-don__td--right">
                         <div style={{ color: '#f97316', fontWeight: 700, fontSize: '16px' }}>
                           {order.total.toLocaleString('vi-VN')}₫
                         </div>
                       </td>
-                      <td style={{ padding: '16px', textAlign: 'center' }}>
+                      <td className="duyet-don__td duyet-don__td--center">
                         <div style={{ color: '#8b92a7', fontSize: '13px' }}>
                           {new Date(order.timestamp).toLocaleDateString('vi-VN')}
                         </div>
-                        <div style={{ color: '#8b92a7', fontSize: '12px' }}>
+                        <div className="duyet-don__history-note">
                           {new Date(order.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </td>
-                      <td style={{ padding: '16px', textAlign: 'center' }}>
+                      <td className="duyet-don__td duyet-don__td--center">
                         <button
                           onClick={() => setSelectedOrderId(order.id)}
                           style={{
@@ -289,26 +286,11 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
             
             {/* Pagination */}
             {totalPages > 1 && (
-              <div style={{
-                padding: '20px 24px',
-                borderTop: '1px solid #2a2f3e',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
+              <div className="duyet-don__pagination">
                 <button
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  style={{
-                    padding: '8px 16px',
-                    background: currentPage === 1 ? '#1a1f2e' : '#2a2f3e',
-                    color: currentPage === 1 ? '#4b5563' : 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                    fontSize: '14px'
-                  }}
+                  className={`duyet-don__page-button ${currentPage === 1 ? "duyet-don__page-button--disabled" : "duyet-don__page-button--idle"}` }
                 >
                   ← Trước
                 </button>
@@ -317,16 +299,7 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    style={{
-                      padding: '8px 12px',
-                      background: currentPage === page ? '#f97316' : '#2a2f3e',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      fontSize: '14px',
-                      fontWeight: currentPage === page ? 600 : 400
-                    }}
+                    className={`duyet-don__page-button ${currentPage === page ? "duyet-don__page-button--active" : "duyet-don__page-button--idle"}` }
                   >
                     {page}
                   </button>
@@ -335,15 +308,7 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
                 <button
                   onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  style={{
-                    padding: '8px 16px',
-                    background: currentPage === totalPages ? '#1a1f2e' : '#2a2f3e',
-                    color: currentPage === totalPages ? '#4b5563' : 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                    fontSize: '14px'
-                  }}
+                  className={`duyet-don__page-button ${currentPage === totalPages ? "duyet-don__page-button--disabled" : "duyet-don__page-button--idle"}` }
                 >
                   Sau →
                 </button>
@@ -384,18 +349,12 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
           onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div style={{
-              padding: '24px',
-              borderBottom: '1px solid #2a2f3e',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
+            <div className="duyet-don__detail-header">
               <div>
-                <h2 style={{ fontSize: '22px', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
+                <h2 className="duyet-don__title">
                   🛒 Chi Tiết Đơn Hàng
                 </h2>
-                <div style={{ fontSize: '14px', color: '#8b92a7' }}>
+                <div className="duyet-don__subtitle">
                   Mã đơn: <span style={{ color: '#f97316', fontWeight: 600 }}>{selectedOrder.orderCode}</span>
                 </div>
               </div>
@@ -417,26 +376,22 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
             </div>
 
             {/* Customer Info */}
-            <div style={{
-              padding: '20px 24px',
-              background: '#0f1419',
-              borderBottom: '1px solid #2a2f3e'
-            }}>
-              <div style={{ fontSize: '12px', color: '#8b92a7', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div className="duyet-don__customer-box">
+              <div className="duyet-don__label">
                 Thông tin khách hàng
               </div>
-              <div style={{ display: 'flex', gap: '24px' }}>
+              <div className="duyet-don__customer-grid">
                 <div>
-                  <div style={{ fontSize: '14px', color: '#8b92a7', marginBottom: '4px' }}>Tên khách hàng</div>
-                  <div style={{ fontSize: '16px', color: 'white', fontWeight: 600 }}>{selectedOrder.customerName}</div>
+                  <div className="duyet-don__mini-label">Tên khách hàng</div>
+                  <div className="duyet-don__mini-value">{selectedOrder.customerName}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '14px', color: '#8b92a7', marginBottom: '4px' }}>Email</div>
-                  <div style={{ fontSize: '16px', color: 'white', fontWeight: 600 }}>{selectedOrder.customerEmail}</div>
+                  <div className="duyet-don__mini-label">Email</div>
+                  <div className="duyet-don__mini-value">{selectedOrder.customerEmail}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '14px', color: '#8b92a7', marginBottom: '4px' }}>Thời gian</div>
-                  <div style={{ fontSize: '16px', color: 'white', fontWeight: 600 }}>
+                  <div className="duyet-don__mini-label">Thời gian</div>
+                  <div className="duyet-don__mini-value">
                     {new Date(selectedOrder.timestamp).toLocaleString('vi-VN')}
                   </div>
                 </div>
@@ -444,19 +399,9 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
             </div>
 
             {/* Order Items */}
-            <div style={{
-              flex: 1,
-              overflowY: 'auto',
-              padding: '24px'
-            }}>
-              <div style={{
-                marginBottom: '20px',
-                padding: '18px',
-                background: '#0f1419',
-                borderRadius: '12px',
-                border: '1px solid #2a2f3e'
-              }}>
-                <div style={{ fontSize: '12px', color: '#8b92a7', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div className="duyet-don__detail-body">
+              <div className="duyet-don__history-panel">
+                <div className="duyet-don__label">
                   Lịch sử xử lý
                 </div>
                 {historyLoading ? (
@@ -466,7 +411,7 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
                     Chưa có lịch sử xử lý cho đơn này.
                   </div>
                 ) : (
-                  <div style={{ display: 'grid', gap: '10px' }}>
+                  <div className="duyet-don__history-list">
                     {history.map((entry) => (
                       <div
                         key={entry.id}
@@ -481,18 +426,18 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
                         }}
                       >
                         <div>
-                          <div style={{ color: 'white', fontWeight: 600, marginBottom: '4px' }}>
+                          <div className="duyet-don__history-name">
                             {entry.actorName}
                           </div>
-                          <div style={{ color: '#8b92a7', fontSize: '12px' }}>
+                          <div className="duyet-don__history-note">
                             {entry.note || historyActionLabel(entry.action)}
                           </div>
                         </div>
-                        <div style={{ textAlign: 'right' }}>
+                        <div className="duyet-don__history-right">
                           <div style={{ color: '#3b82f6', fontWeight: 600, marginBottom: '4px' }}>
                             {entry.toStatus ? historyStatusLabel(entry.toStatus) : historyActionLabel(entry.action)}
                           </div>
-                          <div style={{ color: '#8b92a7', fontSize: '12px' }}>
+                          <div className="duyet-don__history-note">
                             {new Date(entry.createdAt).toLocaleString('vi-VN')}
                           </div>
                         </div>
@@ -502,7 +447,7 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
                 )}
               </div>
 
-              <div style={{ fontSize: '12px', color: '#8b92a7', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <div className="duyet-don__label">
                 Chi tiết đơn hàng ({selectedOrder.items.length} sản phẩm)
               </div>
               
@@ -527,11 +472,11 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
                       background: '#2a2f3e'
                     }}
                   />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '16px', fontWeight: 600, color: 'white', marginBottom: '8px' }}>
+                  <div className="duyet-don__item-content">
+                    <div className="duyet-don__item-title">
                       {item.productName}
                     </div>
-                    <div style={{ display: 'flex', gap: '16px', fontSize: '14px' }}>
+                    <div className="duyet-don__item-meta">
                       <div>
                         <span style={{ color: '#8b92a7' }}>Số lượng: </span>
                         <span style={{ color: 'white', fontWeight: 600 }}>{item.quantity}</span>
@@ -543,7 +488,7 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
                         </span>
                       </div>
                     </div>
-                    <div style={{ marginTop: '8px', fontSize: '16px' }}>
+                    <div className="duyet-don__item-total">
                       <span style={{ color: '#8b92a7' }}>Thành tiền: </span>
                       <span style={{ color: '#f97316', fontWeight: 700, fontSize: '18px' }}>
                         {(item.price * item.quantity).toLocaleString('vi-VN')}₫
@@ -555,27 +500,15 @@ function OrderApproval({ showList, onClose }: OrderApprovalProps) {
             </div>
 
             {/* Footer with Total and Actions */}
-            <div style={{
-              padding: '24px',
-              borderTop: '2px solid #2a2f3e',
-              background: '#0f1419'
-            }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '20px',
-                padding: '16px',
-                background: '#1a1f2e',
-                borderRadius: '12px'
-              }}>
-                <span style={{ fontSize: '18px', fontWeight: 600, color: 'white' }}>Tổng cộng:</span>
-                <span style={{ fontSize: '28px', fontWeight: 700, color: '#f97316' }}>
+            <div className="duyet-don__footer">
+              <div className="duyet-don__total-box">
+                <span className="duyet-don__total-label">Tổng cộng:</span>
+                <span className="duyet-don__total-value">
                   {selectedOrder.total.toLocaleString('vi-VN')}₫
                 </span>
               </div>
 
-              <div style={{ display: 'flex', gap: '12px' }}>
+              <div className="duyet-don__footer-actions">
                 <button
                   onClick={() => handleReject(selectedOrder.id)}
                   style={{
