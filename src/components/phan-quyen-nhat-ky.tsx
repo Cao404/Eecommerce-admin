@@ -265,35 +265,13 @@ function Rights() {
       <div className="phan-quyen-page__content">
         <div className="phan-quyen-page__stats">
           {stats.map((stat) => (
-            <div
-              key={stat.label}
-              style={{
-                background: '#1a1f2e',
-                padding: '28px',
-                borderRadius: '12px',
-                border: '1px solid #2a2f3e',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '20px',
-              }}
-            >
-              <div
-                style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '12px',
-                  background: `${stat.color}20`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '32px',
-                }}
-              >
+            <div key={stat.label} className="phan-quyen-page__stat">
+              <div className="phan-quyen-page__stat-icon" style={{ background: `${stat.color}20` }}>
                 {stat.icon}
               </div>
               <div>
-                <div style={{ fontSize: '32px', fontWeight: 700, color: 'white', marginBottom: '4px' }}>{stat.value}</div>
-                <div style={{ fontSize: '14px', color: '#8b92a7' }}>{stat.label}</div>
+                <div className="phan-quyen-page__stat-value">{stat.value}</div>
+                <div className="phan-quyen-page__stat-label">{stat.label}</div>
               </div>
             </div>
           ))}
@@ -317,7 +295,7 @@ function Rights() {
 
           {activeTab === 'users' && (
             <>
-              <div style={{ padding: '16px 24px', borderBottom: '1px solid #2a2f3e', fontSize: '12px', color: '#6b7280' }}>
+              <div className="phan-quyen-page__summary">
                 {loading
                   ? 'Đang tải dữ liệu phân quyền...'
                   : error
@@ -328,21 +306,21 @@ function Rights() {
                       )} trong ${filteredUsers.length} kết quả`}
               </div>
 
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <table className="phan-quyen-page__table">
                 <thead>
-                  <tr style={{ background: '#0f1419', borderBottom: '1px solid #2a2f3e' }}>
-                    <th style={thCell}>Người dùng</th>
-                    <th style={thCell}>Vai trò</th>
-                    <th style={thCell}>Quyền hạn</th>
-                    <th style={{ ...thCell, textAlign: 'center' }}>Đơn hàng</th>
-                    <th style={thCell}>Ngày tạo</th>
-                    <th style={{ ...thCell, textAlign: 'center' }}>Thao tác</th>
+                  <tr className="phan-quyen-page__thead">
+                    <th className="phan-quyen-page__th">Người dùng</th>
+                    <th className="phan-quyen-page__th">Vai trò</th>
+                    <th className="phan-quyen-page__th">Quyền hạn</th>
+                    <th className="phan-quyen-page__th phan-quyen-page__th--center">Đơn hàng</th>
+                    <th className="phan-quyen-page__th">Ngày tạo</th>
+                    <th className="phan-quyen-page__th phan-quyen-page__th--center">Thao tác</th>
                   </tr>
                 </thead>
                 <tbody>
                   {!loading && !error && currentUsers.length === 0 ? (
                     <tr>
-                      <td colSpan={6} style={{ padding: '40px 28px', textAlign: 'center', color: '#8b92a7' }}>
+                      <td colSpan={6} className="phan-quyen-page__empty">
                         Không tìm thấy người dùng phù hợp
                       </td>
                     </tr>
