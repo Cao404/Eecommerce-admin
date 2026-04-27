@@ -17,6 +17,8 @@ interface InventoryItem {
   lastUpdated: string
 }
 
+type InventoryStatusFilter = 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
+
 function Inventory() {
   const products = useStore((state) => state.products)
   const orders = useStore((state) => state.pendingOrders)
@@ -25,7 +27,7 @@ function Inventory() {
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [categoryFilter, setCategoryFilter] = useState('all')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'in_stock' | 'low_stock' | 'out_of_stock'>('all')
+  const [statusFilter, setStatusFilter] = useState<InventoryStatusFilter>('all')
   const [selectedItems, setSelectedItems] = useState<number[]>([])
   const [showUpdateModal, setShowUpdateModal] = useState(false)
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null)
@@ -102,6 +104,7 @@ function Inventory() {
   const endIndex = startIndex + itemsPerPage
   const currentItems = filteredItems.slice(startIndex, endIndex)
   const selectedItem = selectedItemId ? inventoryItems.find((item) => item.id === selectedItemId) ?? null : null
+  const selectedAll = filteredItems.length > 0 && selectedItems.length === filteredItems.length
 
   useEffect(() => {
     setCurrentPage(1)
@@ -112,11 +115,11 @@ function Inventory() {
   }, [filteredItems])
 
   const stats = [
-    { label: 'Tổng sản phẩm', value: filteredItems.length.toString(), icon: '📦', color: '#3b82f6' },
-    { label: 'Còn hàng', value: filteredItems.filter((item) => item.status === 'in_stock').length.toString(), icon: '✅', color: '#10b981' },
-    { label: 'Sắp hết', value: filteredItems.filter((item) => item.status === 'low_stock').length.toString(), icon: '⚠️', color: '#f59e0b' },
-    { label: 'Hết hàng', value: filteredItems.filter((item) => item.status === 'out_of_stock').length.toString(), icon: '❌', color: '#ef4444' },
-  ]
+    { label: 'Tổng sản phẩm', value: filteredItems.length.toString(), icon: '📦', tone: 'blue' },
+    { label: 'Còn hàng', value: filteredItems.filter((item) => item.status === 'in_stock').length.toString(), icon: '✅', tone: 'green' },
+    { label: 'Sắp hết', value: filteredItems.filter((item) => item.status === 'low_stock').length.toString(), icon: '⚠️', tone: 'amber' },
+    { label: 'Hết hàng', value: filteredItems.filter((item) => item.status === 'out_of_stock').length.toString(), icon: '❌', tone: 'red' },
+  ] as const
 
   const handleSelectAll = (checked: boolean) => {
     setSelectedItems(checked ? filteredItems.map((item) => item.id) : [])
@@ -170,17 +173,8 @@ function Inventory() {
     alert(`Xuất ${selectedItems.length} sản phẩm ra Excel`)
   }
 
-  const getStatusText = (status: string) => {
-    const texts: Record<string, string> = {
-      in_stock: 'Còn hàng',
-      low_stock: 'Sắp hết',
-      out_of_stock: 'Hết hàng',
-    }
-    return texts[status] || status
-  }
-
   return (
-    <div className="inventory-page" style={{ color: 'white', minHeight: '100vh' }}>
+    <div className="inventory-page">
       <Header
         title="QUẢN LÝ KHO HÀNG"
         searchValue={searchTerm}
@@ -188,81 +182,31 @@ function Inventory() {
         searchPlaceholder="Tìm kiếm sản phẩm, SKU, danh mục..."
       />
 
-      <div className="inventory-page__content" style={{ padding: '40px' }}>
-        <div className="inventory-page__stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '30px' }}>
-          {stats.map((stat, idx) => (
-            <div
-              key={idx}
-              className="inventory-page__stat"
-              style={{
-                background: '#1a1f2e',
-                padding: '28px',
-                borderRadius: '12px',
-                border: '1px solid #2a2f3e',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '20px',
-              }}
-            >
-              <div
-                className="inventory-page__stat-icon"
-                style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '12px',
-                  background: `${stat.color}20`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '32px',
-                }}
-              >
-                {stat.icon}
-              </div>
+      <div className="inventory-page__content">
+        <div className="inventory-page__stats">
+          {stats.map((stat) => (
+            <div key={stat.label} className="inventory-page__stat">
+              <div className={`inventory-page__stat-icon inventory-page__stat-icon--${stat.tone}`}>{stat.icon}</div>
               <div>
-                <div style={{ fontSize: '32px', fontWeight: 700, color: 'white', marginBottom: '4px' }}>{stat.value}</div>
-                <div style={{ fontSize: '14px', color: '#8b92a7' }}>{stat.label}</div>
+                <div className="inventory-page__stat-value">{stat.value}</div>
+                <div className="inventory-page__stat-label">{stat.label}</div>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="inventory-page__panel" style={{ background: '#1a1f2e', borderRadius: '8px', border: '1px solid #2a2f3e', overflow: 'hidden' }}>
-          <div
-            className="inventory-page__panel-head"
-            style={{
-              padding: '20px 24px',
-              borderBottom: '1px solid #2a2f3e',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              gap: '16px',
-              flexWrap: 'wrap',
-            }}
-          >
-            <div className="inventory-page__panel-title" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <div style={{ fontSize: '16px', color: 'white', fontWeight: 500 }}>Danh sách tồn kho</div>
+        <div className="inventory-page__panel">
+          <div className="inventory-page__panel-head">
+            <div className="inventory-page__panel-title">
+              <div>Danh sách tồn kho</div>
               {selectedItems.length > 0 && (
-                <button
-                  onClick={handleExportExcel}
-                  className="inventory-page__btn-success"
-                  style={{
-                    padding: '8px 16px',
-                    background: '#10b981',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                  }}
-                >
+                <button onClick={handleExportExcel} className="inventory-page__btn-success">
                   Xuất Excel ({selectedItems.length} đã chọn)
                 </button>
               )}
             </div>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="inventory-page__btn-filter" style={filterStyle}>
+            <div className="inventory-page__filters">
+              <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="inventory-page__select">
                 <option value="all">Tất cả danh mục</option>
                 {categories.slice(1).map((category) => (
                   <option key={category} value={category}>
@@ -272,9 +216,8 @@ function Inventory() {
               </select>
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as 'all' | 'in_stock' | 'low_stock' | 'out_of_stock')}
-                className="inventory-page__btn-filter"
-                style={filterStyle}
+                onChange={(e) => setStatusFilter(e.target.value as InventoryStatusFilter)}
+                className="inventory-page__select"
               >
                 <option value="all">Tất cả trạng thái</option>
                 <option value="in_stock">Còn hàng</option>
@@ -284,63 +227,60 @@ function Inventory() {
             </div>
           </div>
 
-          <div className="inventory-page__summary" style={{ padding: '16px 24px', borderBottom: '1px solid #2a2f3e', fontSize: '12px', color: '#6b7280' }}>
+          <div className="inventory-page__summary">
             Hiển thị {filteredItems.length === 0 ? 0 : startIndex + 1}-{Math.min(endIndex, filteredItems.length)} trong {filteredItems.length} kết quả
           </div>
 
-          <table className="inventory-page__table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table className="inventory-page__table">
             <thead>
-              <tr className="inventory-page__table-head" style={{ background: '#0f1419', borderBottom: '1px solid #2a2f3e' }}>
-                <th style={{ padding: '20px 28px', textAlign: 'left', width: '50px' }}>
-                  <input
-                    type="checkbox"
-                    checked={filteredItems.length > 0 && selectedItems.length === filteredItems.length}
-                    onChange={(e) => handleSelectAll(e.target.checked)}
-                    style={{ cursor: 'pointer', width: '20px', height: '20px' }}
-                  />
+              <tr className="inventory-page__table-head">
+                <th className="inventory-page__table-th inventory-page__table-th--checkbox">
+                  <input type="checkbox" checked={selectedAll} onChange={(e) => handleSelectAll(e.target.checked)} className="inventory-page__checkbox" />
                 </th>
-                <th style={tableHeadStyle}>Sản phẩm</th>
-                <th style={tableHeadStyle}>Danh mục</th>
-                <th style={tableHeadStyle}>Tồn kho</th>
-                <th style={tableHeadStyle}>Đã đặt</th>
-                <th style={tableHeadStyle}>Khả dụng</th>
-                <th style={tableHeadStyle}>Tối thiểu</th>
-                <th style={tableHeadStyle}>Trạng thái</th>
-                <th style={tableHeadStyle}>Thao tác</th>
+                <th className="inventory-page__table-th">Sản phẩm</th>
+                <th className="inventory-page__table-th">Danh mục</th>
+                <th className="inventory-page__table-th">Tồn kho</th>
+                <th className="inventory-page__table-th">Đã đặt</th>
+                <th className="inventory-page__table-th">Khả dụng</th>
+                <th className="inventory-page__table-th">Tối thiểu</th>
+                <th className="inventory-page__table-th">Trạng thái</th>
+                <th className="inventory-page__table-th">Thao tác</th>
               </tr>
             </thead>
             <tbody>
               {currentItems.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="inventory-page__empty" style={{ padding: '48px', textAlign: 'center', color: '#8b92a7' }}>
+                  <td colSpan={9} className="inventory-page__empty">
                     Không có sản phẩm phù hợp
                   </td>
                 </tr>
               ) : (
                 currentItems.map((item) => (
-                  <tr key={item.id} className="inventory-page__table-row" style={{ borderBottom: '1px solid #2a2f3e' }}>
-                    <td style={{ padding: '20px 28px' }}>
+                  <tr key={item.id} className="inventory-page__table-row">
+                    <td className="inventory-page__table-td">
                       <input
                         type="checkbox"
                         checked={selectedItems.includes(item.id)}
                         onChange={() => handleSelectItem(item.id)}
-                        style={{ cursor: 'pointer', width: '20px', height: '20px' }}
+                        className="inventory-page__checkbox"
                       />
                     </td>
-                    <td style={tableCellStyle}>
-                      <div style={{ color: 'white', fontWeight: 600 }}>{item.productName}</div>
-                      <div style={{ color: '#6b7280', fontSize: '13px' }}>{item.sku}</div>
+                    <td className="inventory-page__table-td">
+                      <div className="inventory-page__product-name">{item.productName}</div>
+                      <div className="inventory-page__product-sku">{item.sku}</div>
                     </td>
-                    <td style={tableCellStyle}>{item.category}</td>
-                    <td style={tableCellStyle}>{item.stock}</td>
-                    <td style={tableCellStyle}>{item.reserved}</td>
-                    <td style={tableCellStyle}>{item.available}</td>
-                    <td style={tableCellStyle}>{item.minStock}</td>
-                    <td style={tableCellStyle}>
-                      <span style={statusBadgeStyle(item.status)}>{getStatusText(item.status)}</span>
+                    <td className="inventory-page__table-td">{item.category}</td>
+                    <td className="inventory-page__table-td">{item.stock}</td>
+                    <td className="inventory-page__table-td">{item.reserved}</td>
+                    <td className="inventory-page__table-td">{item.available}</td>
+                    <td className="inventory-page__table-td">{item.minStock}</td>
+                    <td className="inventory-page__table-td">
+                      <span className={`inventory-page__badge inventory-page__badge--${item.status}`}>
+                        {getStatusText(item.status)}
+                      </span>
                     </td>
-                    <td style={tableCellStyle}>
-                      <button onClick={() => handleUpdateClick(item.id)} style={actionButtonStyle}>
+                    <td className="inventory-page__table-td">
+                      <button onClick={() => handleUpdateClick(item.id)} className="inventory-page__btn-primary">
                         Cập nhật
                       </button>
                     </td>
@@ -352,19 +292,23 @@ function Inventory() {
         </div>
 
         {totalPages > 1 && (
-          <div style={paginationStyle}>
-            <button onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))} disabled={currentPage === 1} style={pagerButtonStyle(currentPage === 1)}>
+          <div className="inventory-page__pagination">
+            <button onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))} disabled={currentPage === 1} className="inventory-page__pager">
               ← Trước
             </button>
             {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-              <button key={page} onClick={() => setCurrentPage(page)} style={pageButtonStyle(currentPage === page)}>
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`inventory-page__pager ${currentPage === page ? 'inventory-page__pager--active' : ''}`}
+              >
                 {page}
               </button>
             ))}
             <button
               onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
-              style={pagerButtonStyle(currentPage === totalPages)}
+              className="inventory-page__pager"
             >
               Sau →
             </button>
@@ -373,45 +317,45 @@ function Inventory() {
       </div>
 
       {showUpdateModal && selectedItem && (
-        <div style={overlayStyle} onClick={() => setShowUpdateModal(false)}>
-          <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0 }}>Cập nhật tồn kho</h2>
-              <button onClick={() => setShowUpdateModal(false)} style={closeButtonStyle}>
+        <div className="inventory-page__modal-overlay" onClick={() => setShowUpdateModal(false)}>
+          <div className="inventory-page__modal" onClick={(e) => e.stopPropagation()}>
+            <div className="inventory-page__modal-header">
+              <h2 className="inventory-page__modal-title">Cập nhật tồn kho</h2>
+              <button onClick={() => setShowUpdateModal(false)} className="inventory-page__close-button">
                 ×
               </button>
             </div>
 
-            <div style={{ display: 'grid', gap: '16px' }}>
+            <div className="inventory-page__modal-grid">
               <div>
-                <label style={labelStyle}>Sản phẩm</label>
-                <div style={readonlyFieldStyle}>{selectedItem.productName}</div>
+                <label className="inventory-page__label">Sản phẩm</label>
+                <div className="inventory-page__field inventory-page__field--readonly">{selectedItem.productName}</div>
               </div>
-              <div style={formGridStyle}>
+              <div className="inventory-page__form-grid">
                 <div>
-                  <label style={labelStyle}>Tồn kho</label>
+                  <label className="inventory-page__label">Tồn kho</label>
                   <input
                     type="number"
                     value={updateFormData.stock}
                     onChange={(e) => setUpdateFormData((current) => ({ ...current, stock: Number(e.target.value) }))}
-                    style={inputStyle}
+                    className="inventory-page__field"
                   />
                 </div>
                 <div>
-                  <label style={labelStyle}>Tối thiểu</label>
+                  <label className="inventory-page__label">Tối thiểu</label>
                   <input
                     type="number"
                     value={updateFormData.minStock}
                     onChange={(e) => setUpdateFormData((current) => ({ ...current, minStock: Number(e.target.value) }))}
-                    style={inputStyle}
+                    className="inventory-page__field"
                   />
                 </div>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-                <button onClick={() => setShowUpdateModal(false)} style={secondaryButtonStyle}>
+              <div className="inventory-page__actions">
+                <button onClick={() => setShowUpdateModal(false)} className="inventory-page__btn-secondary">
                   Hủy
                 </button>
-                <button onClick={() => void handleUpdateInventory()} style={primaryButtonStyle}>
+                <button onClick={() => void handleUpdateInventory()} className="inventory-page__btn-primary">
                   Lưu thay đổi
                 </button>
               </div>
@@ -423,168 +367,13 @@ function Inventory() {
   )
 }
 
-const filterStyle: React.CSSProperties = {
-  padding: '10px 14px',
-  background: '#0f1419',
-  color: 'white',
-  border: '1px solid #2a2f3e',
-  borderRadius: '8px',
-  fontSize: '14px',
-}
-
-const tableHeadStyle: React.CSSProperties = {
-  padding: '20px 28px',
-  textAlign: 'left',
-  color: '#8b92a7',
-  fontSize: '12px',
-  fontWeight: 700,
-  textTransform: 'uppercase',
-  letterSpacing: '1px',
-}
-
-const tableCellStyle: React.CSSProperties = {
-  padding: '20px 28px',
-  color: '#cbd5e1',
-}
-
-const statusBadgeStyle = (status: string): React.CSSProperties => ({
-  padding: '6px 12px',
-  borderRadius: '999px',
-  background: `${getStatusColorMap(status)}20`,
-  color: getStatusColorMap(status),
-  fontWeight: 700,
-  fontSize: '13px',
-})
-
-function getStatusColorMap(status: string) {
-  const colors: Record<string, string> = {
-    in_stock: '#10b981',
-    low_stock: '#f59e0b',
-    out_of_stock: '#ef4444',
+function getStatusText(status: string) {
+  const texts: Record<string, string> = {
+    in_stock: 'Còn hàng',
+    low_stock: 'Sắp hết',
+    out_of_stock: 'Hết hàng',
   }
-  return colors[status] || '#6b7280'
-}
-
-const actionButtonStyle: React.CSSProperties = {
-  padding: '8px 14px',
-  background: '#3b82f6',
-  color: 'white',
-  border: 'none',
-  borderRadius: '6px',
-  cursor: 'pointer',
-  fontSize: '13px',
-  fontWeight: 500,
-}
-
-const paginationStyle: React.CSSProperties = {
-  padding: '24px 0 0',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  gap: '8px',
-  flexWrap: 'wrap',
-}
-
-const pagerButtonStyle = (disabled: boolean): React.CSSProperties => ({
-  padding: '8px 16px',
-  background: disabled ? '#1a1f2e' : '#2a2f3e',
-  color: disabled ? '#6b7280' : 'white',
-  border: '1px solid #2a2f3e',
-  borderRadius: '6px',
-  cursor: disabled ? 'not-allowed' : 'pointer',
-  fontSize: '14px',
-})
-
-const pageButtonStyle = (active: boolean): React.CSSProperties => ({
-  padding: '8px 12px',
-  background: active ? '#f97316' : '#2a2f3e',
-  color: 'white',
-  border: '1px solid #2a2f3e',
-  borderRadius: '6px',
-  cursor: 'pointer',
-  fontSize: '14px',
-  minWidth: '40px',
-})
-
-const overlayStyle: React.CSSProperties = {
-  position: 'fixed',
-  inset: 0,
-  background: 'rgba(0,0,0,0.75)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: '24px',
-  zIndex: 1000,
-}
-
-const modalStyle: React.CSSProperties = {
-  width: 'min(100%, 520px)',
-  background: '#1a1f2e',
-  border: '1px solid #2a2f3e',
-  borderRadius: '16px',
-  padding: '24px',
-}
-
-const closeButtonStyle: React.CSSProperties = {
-  width: '36px',
-  height: '36px',
-  borderRadius: '10px',
-  border: '1px solid #2a2f3e',
-  background: '#0f1419',
-  color: 'white',
-  cursor: 'pointer',
-  fontSize: '20px',
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  marginBottom: '8px',
-  color: '#8b92a7',
-  fontSize: '13px',
-  fontWeight: 600,
-}
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '12px 14px',
-  background: '#0f1419',
-  border: '1px solid #2a2f3e',
-  borderRadius: '10px',
-  color: 'white',
-}
-
-const readonlyFieldStyle: React.CSSProperties = {
-  padding: '12px 14px',
-  background: '#0f1419',
-  border: '1px solid #2a2f3e',
-  borderRadius: '10px',
-  color: 'white',
-}
-
-const formGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-  gap: '12px',
-}
-
-const secondaryButtonStyle: React.CSSProperties = {
-  padding: '12px 18px',
-  background: '#2a2f3e',
-  color: 'white',
-  border: 'none',
-  borderRadius: '8px',
-  cursor: 'pointer',
-  fontWeight: 600,
-}
-
-const primaryButtonStyle: React.CSSProperties = {
-  padding: '12px 18px',
-  background: '#3b82f6',
-  color: 'white',
-  border: 'none',
-  borderRadius: '8px',
-  cursor: 'pointer',
-  fontWeight: 600,
+  return texts[status] || status
 }
 
 export default Inventory
