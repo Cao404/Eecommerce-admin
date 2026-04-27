@@ -1,5 +1,417 @@
-﻿.van-chuyen-page { color: white; min-height: 100vh; }
-.van-chuyen-page__content { padding: 40px; }
-.van-chuyen-page__stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-bottom: 24px; }
-.van-chuyen-page__panel { }
-.van-chuyen-page__toolbar { }
+﻿.van-chuyen-page {
+  color: white;
+  min-height: 100vh;
+}
+
+.van-chuyen-page__content {
+  padding: 40px;
+}
+
+.van-chuyen-page__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.van-chuyen-page__stat {
+  padding: 28px;
+  border-radius: 14px;
+  border: 1px solid #2a2f3e;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #1a1f2e;
+}
+
+.van-chuyen-page__stat-label {
+  color: #8b96ad;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.van-chuyen-page__stat-value {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.van-chuyen-page__stat--blue {
+  background: linear-gradient(180deg, rgba(82, 116, 255, 0.18), rgba(26, 31, 46, 1));
+}
+
+.van-chuyen-page__stat--green {
+  background: linear-gradient(180deg, rgba(46, 204, 113, 0.16), rgba(26, 31, 46, 1));
+}
+
+.van-chuyen-page__stat--gray {
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.12), rgba(26, 31, 46, 1));
+}
+
+.van-chuyen-page__stat--red {
+  background: linear-gradient(180deg, rgba(239, 68, 68, 0.14), rgba(26, 31, 46, 1));
+}
+
+.van-chuyen-page__panel {
+  background: #1a1f2e;
+  border: 1px solid #2a2f3e;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.van-chuyen-page__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 24px;
+  flex-wrap: wrap;
+}
+
+.van-chuyen-page__toolbar-text {
+  color: #8b96ad;
+  font-size: 16px;
+}
+
+.van-chuyen-page__toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.van-chuyen-page__select {
+  min-width: 170px;
+  background: #121722;
+  color: #eef2ff;
+  border: 1px solid #2a2f3e;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  outline: none;
+}
+
+.van-chuyen-page__select:focus,
+.van-chuyen-page__input:focus {
+  border-color: #7c7ce8;
+  box-shadow: 0 0 0 3px rgba(124, 124, 232, 0.14);
+}
+
+.van-chuyen-page__button {
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 18px;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+}
+
+.van-chuyen-page__button:hover {
+  transform: translateY(-1px);
+}
+
+.van-chuyen-page__button:active {
+  transform: translateY(0);
+}
+
+.van-chuyen-page__button--primary {
+  background: linear-gradient(135deg, #7c7ce8, #5b66ff);
+  box-shadow: 0 12px 28px rgba(91, 102, 255, 0.28);
+}
+
+.van-chuyen-page__button--blue {
+  background: linear-gradient(135deg, #4299e1, #3b82f6);
+}
+
+.van-chuyen-page__button--green {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.van-chuyen-page__button--red {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.van-chuyen-page__button--secondary {
+  background: linear-gradient(135deg, #334155, #475569);
+}
+
+.van-chuyen-page__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.van-chuyen-page__thead {
+  background: #121722;
+}
+
+.van-chuyen-page__th {
+  text-align: left;
+  padding: 18px 24px;
+  color: #94a3b8;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.van-chuyen-page__th--right,
+.van-chuyen-page__td--right {
+  text-align: right;
+}
+
+.van-chuyen-page__row {
+  border-top: 1px solid #2a2f3e;
+}
+
+.van-chuyen-page__row:hover {
+  background: rgba(124, 124, 232, 0.05);
+}
+
+.van-chuyen-page__td {
+  padding: 18px 24px;
+  font-size: 14px;
+  color: #dbe4f0;
+  vertical-align: middle;
+}
+
+.van-chuyen-page__empty-cell {
+  text-align: center;
+  padding: 40px 24px;
+  color: #8b96ad;
+}
+
+.van-chuyen-page__partner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.van-chuyen-page__logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  background: rgba(124, 124, 232, 0.14);
+  border: 1px solid rgba(124, 124, 232, 0.25);
+}
+
+.van-chuyen-page__name {
+  font-weight: 700;
+  font-size: 15px;
+  color: #f8fafc;
+}
+
+.van-chuyen-page__muted {
+  margin-top: 4px;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.van-chuyen-page__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.van-chuyen-page__badge--express {
+  background: rgba(245, 158, 11, 0.16);
+  color: #f59e0b;
+}
+
+.van-chuyen-page__badge--standard {
+  background: rgba(59, 130, 246, 0.16);
+  color: #60a5fa;
+}
+
+.van-chuyen-page__badge--economy {
+  background: rgba(34, 197, 94, 0.16);
+  color: #4ade80;
+}
+
+.van-chuyen-page__badge--active {
+  background: rgba(34, 197, 94, 0.18);
+  color: #22c55e;
+}
+
+.van-chuyen-page__badge--inactive {
+  background: rgba(148, 163, 184, 0.16);
+  color: #cbd5e1;
+}
+
+.van-chuyen-page__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.van-chuyen-page__pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 24px 24px;
+  flex-wrap: wrap;
+}
+
+.van-chuyen-page__page {
+  min-width: 42px;
+  height: 42px;
+  border: 1px solid #2a2f3e;
+  border-radius: 10px;
+  background: #121722;
+  color: #e2e8f0;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.van-chuyen-page__page:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.van-chuyen-page__page--active {
+  background: linear-gradient(135deg, #7c7ce8, #5b66ff);
+  border-color: transparent;
+}
+
+.van-chuyen-page__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 8, 15, 0.72);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 50;
+}
+
+.van-chuyen-page__modal {
+  width: min(820px, 100%);
+  background: linear-gradient(180deg, #1b2233 0%, #151a27 100%);
+  border: 1px solid #2a2f3e;
+  border-radius: 20px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  padding: 24px;
+}
+
+.van-chuyen-page__modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.van-chuyen-page__modal-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.van-chuyen-page__close {
+  width: 44px;
+  height: 44px;
+  border: 1px solid #2a2f3e;
+  border-radius: 14px;
+  background: #121722;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.van-chuyen-page__modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.van-chuyen-page__form {
+  display: grid;
+  gap: 14px;
+}
+
+.van-chuyen-page__form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.van-chuyen-page__input {
+  width: 100%;
+  background: #121722;
+  color: #f8fafc;
+  border: 1px solid #2a2f3e;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 15px;
+  outline: none;
+}
+
+.van-chuyen-page__input::placeholder {
+  color: #8b96ad;
+}
+
+.van-chuyen-page__detail {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 18px;
+  color: #e2e8f0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .van-chuyen-page__content {
+    padding: 24px;
+  }
+
+  .van-chuyen-page__toolbar {
+    align-items: flex-start;
+  }
+
+  .van-chuyen-page__form-grid,
+  .van-chuyen-page__detail {
+    grid-template-columns: 1fr;
+  }
+
+  .van-chuyen-page__table,
+  .van-chuyen-page__thead,
+  .van-chuyen-page__tbody,
+  .van-chuyen-page__tr,
+  .van-chuyen-page__th,
+  .van-chuyen-page__td {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 700px) {
+  .van-chuyen-page__stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .van-chuyen-page__toolbar-actions {
+    width: 100%;
+  }
+
+  .van-chuyen-page__select,
+  .van-chuyen-page__button {
+    width: 100%;
+  }
+
+  .van-chuyen-page__actions {
+    justify-content: flex-start;
+  }
+}
