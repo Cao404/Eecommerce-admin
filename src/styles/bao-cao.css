@@ -208,3 +208,175 @@
   text-align: center;
   color: #8b92a7;
 }
+.reports-page__grid--main {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.reports-page__grid--secondary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.reports-page__panel-title--small {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+}
+
+.reports-page__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reports-page__item-card {
+  padding: 16px;
+  background: #0f1419;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.reports-page__item-card--category {
+  align-items: flex-start;
+}
+
+.reports-page__item-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.reports-page__item-rank {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #2a2f3e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b92a7;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.reports-page__item-text {
+  min-width: 0;
+}
+
+.reports-page__item-title {
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.reports-page__item-subtitle {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.reports-page__item-value {
+  text-align: right;
+  color: #10b981;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.reports-page__item-value--blue {
+  color: #3b82f6;
+}
+
+.reports-page__item-body {
+  flex: 1;
+}
+
+.reports-page__progress {
+  margin-top: 10px;
+  height: 8px;
+  border-radius: 999px;
+  background: #1f2937;
+  overflow: hidden;
+}
+
+.reports-page__progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+}
+
+.reports-page__status-list {
+  display: grid;
+  gap: 12px;
+}
+
+.reports-page__status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: #0f1419;
+  border-radius: 10px;
+  border: 1px solid #2a2f3e;
+}
+
+.reports-page__status-label {
+  color: #8b92a7;
+  font-size: 14px;
+}
+
+.reports-page__status-value {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.reports-page__customer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: #0f1419;
+  border-radius: 10px;
+  border: 1px solid #2a2f3e;
+  gap: 16px;
+}
+
+.reports-page__customer-main {
+  min-width: 0;
+}
+
+.reports-page__customer-name {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.reports-page__customer-email {
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 4px;
+  word-break: break-word;
+}
+
+.reports-page__customer-meta {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.reports-page__customer-orders {
+  color: #10b981;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.reports-page__customer-date {
+  color: #8b92a7;
+  font-size: 12px;
+  margin-top: 4px;
+}
